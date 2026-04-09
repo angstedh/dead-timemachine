@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#090909">
+<title>Dead Time Machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Josefin+Sans:ital,wght@0,300;0,400;0,600;1,300&family=Oswald:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#090909;--panel:#141414;--card:#181818;--border:#252525;--subtle:#2e2e2e;
+  --gold:#C9943A;--amber:#E8A820;--cream:#EDE5D5;--dim:#626262;--dimmer:#3a3a3a;
+  --teal:#2A8A78;--purple:#7B52AB;--crimson:#B03030;
+  --font-display:'Cinzel',serif;--font-list:'Josefin Sans',sans-serif;--font-ui:'Oswald',sans-serif;
+  --t:.22s cubic-bezier(.4,0,.2,1);
+}
+html{height:100%;background:var(--black)}
+body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(--font-list);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+
+/* VIEWS */
+.view{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--black);transition:opacity var(--t),transform var(--t);will-change:transform,opacity;z-index:1}
+.view.r{transform:translateX(100%);opacity:0;pointer-events:none}
+.view.l{transform:translateX(-28%);opacity:0;pointer-events:none}
+
+/* NAV BAR */
+.nav{position:sticky;top:0;z-index:20;background:rgba(9,9,9,.95);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 16px;height:52px;display:flex;align-items:center;gap:12px}
+.back{background:none;border:none;color:var(--gold);font-size:24px;cursor:pointer;padding:4px 6px 4px 0;flex-shrink:0;font-family:var(--font-ui);line-height:1}
+.nav-t{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-s{font-family:var(--font-ui);font-size:10px;color:var(--dim);letter-spacing:1px;margin-top:1px}
+
+/* HOME */
+#home{padding-bottom:72px}
+.hero{padding:54px 20px 30px;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0f0f0f 0%,var(--black) 100%)}
+.hero-eye{font-family:var(--font-ui);font-weight:300;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-bottom:16px;opacity:.85}
+.hero-h{font-family:var(--font-display);font-size:clamp(30px,9vw,46px);font-weight:900;color:var(--cream);letter-spacing:.03em;line-height:1.05;text-shadow:0 0 60px rgba(201,148,58,.18)}
+.hero-h em{display:block;font-style:normal;color:var(--gold);font-weight:400;font-size:.62em;letter-spacing:.2em;margin-bottom:6px}
+.hero-sub{font-family:var(--font-ui);font-weight:300;font-size:11px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:14px}
+
+/* SECTION HEADERS */
+.sec{padding:28px 16px 0}
+.sec-eye{font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-eye::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* SHOW OF DAY CARD */
+.sotd{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;position:relative}
+.sotd::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--era-color,var(--gold))}
+.sotd:active{background:#1d1d1d}
+.sotd-in{padding:18px 18px 16px 22px}
+.sotd-date{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--cream)}
+.sotd-dow{font-family:var(--font-ui);font-size:9px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-top:3px}
+.sotd-venue{font-family:var(--font-list);font-size:14px;color:#b8b0a0;margin-top:10px;line-height:1.3;font-weight:300}
+.sotd-city{font-family:var(--font-ui);font-size:12px;color:var(--teal);letter-spacing:.5px;margin-top:4px}
+.sotd-era{font-family:var(--font-ui);font-size:10px;color:var(--dim);margin-top:8px;letter-spacing:1px;font-style:italic}
+.sotd-songs{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:3px}
+.sotd-song{font-family:var(--font-list);font-size:13px;color:var(--cream);font-weight:300;line-height:1.5}
+.sotd-song.hi{color:var(--amber);font-weight:400}
+.sotd-more{font-family:var(--font-ui);font-size:10px;color:var(--dim);letter-spacing:1px;margin-top:5px}
+.sotd-ft{padding:12px 18px 12px 22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.sotd-src{font-family:var(--font-ui);font-size:9px;color:var(--dimmer);letter-spacing:1px}
+.sotd-listen{font-family:var(--font-ui);font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;opacity:.85}
+
+/* TABS */
+.browse{padding:28px 16px 0}
+.tabs{display:flex;border-bottom:1px solid var(--border)}
+.tab{flex:1;background:none;border:none;cursor:pointer;font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding:12px 0;position:relative;transition:color var(--t)}
+.tab.on{color:var(--gold)}
+.tab.on::after{content:'';position:absolute;bottom:-1px;left:10%;right:10%;height:2px;background:var(--gold);border-radius:2px 2px 0 0}
+.tp{display:none}.tp.on{display:block}
+
+/* ERA LIST */
+.era-list{display:flex;flex-direction:column;gap:1px;padding-top:1px}
+.era-row{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border-bottom:1px solid var(--border);padding:15px 16px;cursor:pointer;transition:background var(--t);position:relative;overflow:hidden;gap:10px}
+.era-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--era-color,var(--gold))}
+.era-row:active{background:#1d1d1d}
+.era-in{padding-left:8px}
+.era-name{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--cream)}
+.era-yrs{font-family:var(--font-ui);font-size:10px;color:var(--dim);letter-spacing:1px;margin-top:2px}
+.era-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.era-cnt{font-family:var(--font-ui);font-size:11px;color:var(--dim)}
+.era-chev{color:var(--dimmer);font-size:20px;font-family:var(--font-ui)}
+
+/* YEAR GRID */
+.yr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;padding-top:1px}
+.yr-btn{background:var(--panel);border:none;border-bottom:1px solid var(--border);cursor:pointer;padding:13px 6px;text-align:center;transition:background var(--t)}
+.yr-btn:active{background:#1d1d1d}
+.yr-n{font-family:var(--font-display);font-size:14px;color:var(--cream);display:block;font-weight:700}
+.yr-c{font-family:var(--font-ui);font-size:9px;color:var(--dim);letter-spacing:1px;display:block;margin-top:2px}
+
+.home-ft{padding:32px 20px 0;text-align:center}
+.home-ft p{font-family:var(--font-ui);font-size:10px;color:var(--dimmer);letter-spacing:1px;line-height:1.9}
+.home-ft a{color:var(--gold);text-decoration:none}
+
+/* LIST VIEW */
+.show-list{}
+.show-row{display:flex;align-items:flex-start;padding:0 16px;border-bottom:1px solid var(--border);cursor:pointer;min-height:72px;transition:background var(--t)}
+.show-row:active{background:var(--panel)}
+.dt-col{padding:14px 14px 14px 0;border-right:1px solid var(--subtle);margin-right:14px;flex-shrink:0;text-align:right;width:46px}
+.dt-m{font-family:var(--font-ui);font-size:8px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block}
+.dt-d{font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--cream);line-height:1}
+.dt-y{font-family:var(--font-ui);font-size:9px;color:var(--dim);display:block}
+.sh-info{padding:13px 0;flex:1;min-width:0}
+.sh-venue{font-family:var(--font-list);font-size:14px;color:var(--cream);font-weight:400;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-city{font-family:var(--font-ui);font-size:11px;color:var(--teal);margin-top:3px}
+.sh-badge{font-family:var(--font-ui);font-size:9px;color:var(--crimson);margin-top:3px;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-chev{font-family:var(--font-ui);font-size:18px;color:var(--subtle);padding:14px 0 14px 8px;align-self:center;flex-shrink:0}
+
+/* SHOW DETAIL */
+.show-hero{padding:24px 20px 22px;border-bottom:1px solid var(--border);position:relative;background:linear-gradient(180deg,#121212 0%,var(--black) 100%)}
+.show-hero::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--era-color,var(--gold))}
+.sh-date{font-family:var(--font-display);font-size:clamp(20px,5.5vw,28px);font-weight:900;color:var(--cream)}
+.sh-dow{font-family:var(--font-ui);font-size:10px;color:var(--gold);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
+.sh-venue-big{font-family:var(--font-list);font-size:16px;color:var(--cream);margin-top:14px;line-height:1.3;font-weight:400}
+.sh-city-big{font-family:var(--font-ui);font-size:13px;color:var(--teal);margin-top:5px;letter-spacing:.5px}
+.sh-era-lbl{font-family:var(--font-ui);font-size:10px;color:var(--dim);margin-top:10px;letter-spacing:1.5px;text-transform:uppercase;font-style:italic}
+.sh-badge-big{display:inline-block;margin-top:10px;background:rgba(176,48,48,.13);border:1px solid rgba(176,48,48,.32);border-radius:4px;padding:4px 10px;font-family:var(--font-ui);font-size:10px;color:var(--crimson);letter-spacing:.5px}
+
+.setlist-wrap{padding-bottom:80px}
+.set-block{padding:20px 20px 0}
+.set-lbl{font-family:var(--font-ui);font-size:9px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--gold);padding-bottom:10px;border-bottom:1px solid var(--subtle);margin-bottom:2px}
+.set-lbl.enc{color:var(--purple)}
+
+.song-row{display:flex;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a}
+.song-row:last-child{border-bottom:none}
+.sn{font-family:var(--font-ui);font-size:10px;color:var(--dimmer);width:18px;flex-shrink:0;text-align:right}
+.s{font-family:var(--font-list);font-size:16px;color:var(--cream);flex:1;line-height:1.3;font-weight:300;letter-spacing:.3px}
+.s.hi{color:var(--amber);font-weight:400}
+.s.en{color:#a898c8;font-weight:300;font-style:italic}
+
+.sh-footer{margin:22px 20px 0;padding:14px 16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:10px}
+.sh-ft-src{font-family:var(--font-ui);font-size:9px;color:var(--dimmer);letter-spacing:1px;line-height:1.7}
+.sh-ft-btns{display:flex;gap:8px}
+.arch-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(201,148,58,.1);border:1px solid rgba(201,148,58,.28);border-radius:6px;padding:9px 12px;text-decoration:none;flex:1;transition:background var(--t)}
+.arch-btn:active{background:rgba(201,148,58,.2)}
+.arch-btn span{font-family:var(--font-ui);font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;text-align:center}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--subtle);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="view" id="home">
+  <div class="hero">
+    <div class="hero-eye">Grateful Dead</div>
+    <h1 class="hero-h"><em>The</em>Time Machine</h1>
+    <p class="hero-sub">Every night · Every song · 1965–1995</p>
+  </div>
+
+  <div class="sec">
+    <div class="sec-eye">Show of the Day</div>
+    <div class="sotd" id="sotd"></div>
+  </div>
+
+  <div class="browse">
+    <div class="sec-eye" style="margin-bottom:0">Browse</div>
+    <div class="tabs">
+      <button class="tab on" data-tp="eras">By Era</button>
+      <button class="tab" data-tp="years">By Year</button>
+    </div>
+    <div class="tp on" id="tp-eras"><div class="era-list" id="era-list"></div></div>
+    <div class="tp" id="tp-years"><div class="yr-grid" id="yr-grid"></div></div>
+  </div>
+
+  <div class="home-ft">
+    <p>Setlists verified from <a href="https://www.setlists.net" target="_blank">setlists.net</a> · Tap Listen to stream on <a href="https://archive.org/details/GratefulDead" target="_blank">Archive.org</a></p>
+  </div>
+</div>
+
+<!-- LIST -->
+<div class="view r" id="list-view">
+  <div class="nav">
+    <button class="back" id="list-back">‹</button>
+    <div><div class="nav-t" id="list-t"></div><div class="nav-s" id="list-s"></div></div>
+  </div>
+  <div class="show-list" id="show-list"></div>
+</div>
+
+<!-- SHOW -->
+<div class="view r" id="show-view">
+  <div class="nav">
+    <button class="back" id="show-back">‹</button>
+    <div><div class="nav-t" id="show-t"></div><div class="nav-s" id="show-s"></div></div>
+  </div>
+  <div id="show-content"></div>
+</div>
+
+<script>
+// ─── VERIFIED DATA from setlists.net ───────────────────────────────────
+// Each show ID matches setlists.net ?show_id= parameter.
+// Setlists transcribed exactly from source. Segues: "A > B" notation.
+
+const HI = new Set(["Dark Star","Morning Dew","Terrapin Station","St. Stephen",
+  "Unbroken Chain","Eyes Of The World","Scarlet Begonias","Estimated Prophet",
+  "Attics Of My Life","So Many Roads","Black Muddy River","China Doll",
+  "Death Don't Have No Mercy","He's Gone","Stella Blue","Wharf Rat",
+  "Fire On The Mountain","Greatest Story Ever Told","Bird Song"]);
+
+const isHi = s => { for (const h of HI) if (s.includes(h)) return true; return false; };
+
+const MOS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+const MOL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+const pd = d => { const [y,m,day] = d.split('-').map(Number); return {y,m,day}; };
+const fmtL = d => { const {y,m,day} = pd(d); return `${MOL[m-1]} ${day}, ${y}`; };
+const archUrl = d => `https://www.archive.org/search.php?query=title%3A%28Grateful%20Dead%29%20AND%20date%3A${d}`;
+const slUrl   = id => `https://www.setlists.net/?show_id=${id}`;
+
+const ERAS = [
+  {
+    id:"pigpen", name:"Pigpen & The Acid Years", years:"1965–1972", color:"#8B4513",
+    shows:[{
+      id:"0794", date:"1972-08-27", dow:"Sunday",
+      venue:"Old Renaissance Faire Grounds", city:"Veneta, OR",
+      badge:"Oregon Country Fair benefit — released as 'Sunshine Daydream'",
+      sets:[
+        {lbl:"Set One", songs:["Promised Land","Sugaree","Me And My Uncle","Deal","Black Throated Wind","China Cat Sunflower > I Know You Rider","Mexicali Blues","Bertha"]},
+        {lbl:"Set Two", songs:["Playin' In The Band","He's Gone","Jack Straw","Bird Song","Greatest Story Ever Told"]},
+        {lbl:"Set Three", songs:["Dark Star > El Paso","Sing Me Back Home","Sugar Magnolia"]},
+        {lbl:"Encore", songs:["Casey Jones","One More Saturday Night"], enc:true}
+      ]
+    }]
+  },
+  {
+    id:"keith-donna", name:"The Keith & Donna Years", years:"1972–1979", color:"#1A6B55",
+    shows:[
+      {
+        id:"1009", date:"1977-05-08", dow:"Sunday",
+        venue:"Barton Hall, Cornell University", city:"Ithaca, NY",
+        badge:"#1 most commented show in Dead history",
+        sets:[
+          {lbl:"Set One", songs:["New Minglewood Blues","Loser","El Paso","They Love Each Other","Jack Straw","Deal","Lazy Lightnin' > Supplication","Brown-Eyed Women","Mama Tried","Row Jimmy","Dancin' In The Streets"]},
+          {lbl:"Set Two", songs:["Scarlet Begonias > Fire On The Mountain","Estimated Prophet","St. Stephen > Not Fade Away > St. Stephen","Morning Dew"]},
+          {lbl:"Encore", songs:["One More Saturday Night"], enc:true}
+        ]
+      },
+      {
+        id:"1027", date:"1977-09-03", dow:"Saturday",
+        venue:"Raceway Park", city:"Englishtown, NJ",
+        badge:"~100,000 in attendance — largest Dead crowd ever",
+        sets:[
+          {lbl:"Set One", songs:["Promised Land","They Love Each Other","Me And My Uncle","Mississippi Half-Step Uptown Toodeloo","Looks Like Rain","Peggy-O","New Minglewood Blues","Friend Of The Devil","The Music Never Stopped"]},
+          {lbl:"Set Two", songs:["Bertha","Good Lovin'","Loser","Estimated Prophet","Eyes Of The World","Samson And Delilah","He's Gone","Not Fade Away","Truckin'"]},
+          {lbl:"Encore", songs:["Terrapin Station"], enc:true}
+        ]
+      },
+      {
+        id:"1153", date:"1979-02-17", dow:"Saturday",
+        venue:"Oakland Coliseum Arena", city:"Oakland, CA",
+        badge:"Final show with Keith & Donna Godchaux",
+        sets:[
+          {lbl:"Set One", songs:["Greatest Story Ever Told","Don't Ease Me In","Mama Tried","Mexicali Blues","Friend Of The Devil","Passenger","High Time","Looks Like Rain","Jack-A-Roe","Lazy Lightnin' > Supplication"]},
+          {lbl:"Set Two", songs:["Might As Well","I Need A Miracle","Bertha","Good Lovin'","From The Heart Of Me","Big Railroad Blues","Terrapin Station","Playin' In The Band > Drums > The Wheel > Shakedown Street > Playin' In The Band","Sugar Magnolia"]},
+          {lbl:"Encore", songs:["One More Saturday Night"], enc:true}
+        ]
+      }
+    ]
+  },
+  {
+    id:"brent", name:"The Brent Years", years:"1979–1990", color:"#185FA5",
+    shows:[
+      {
+        id:"1155", date:"1979-04-22", dow:"Sunday",
+        venue:"Spartan Stadium", city:"San Jose, CA",
+        badge:"Brent Mydland's first show with the Grateful Dead",
+        sets:[
+          {lbl:"Set One", songs:["Jack Straw","Tennessee Jed","Mama Tried","Mexicali Blues","Sugaree","Looks Like Rain","Brown-Eyed Women","New Minglewood Blues","Stagger Lee","Passenger","Deal"]},
+          {lbl:"Set Two", songs:["I Need A Miracle","Bertha","Good Lovin'","Scarlet Begonias > Fire On The Mountain","Estimated Prophet","He's Gone","Drums","The Other One","Wharf Rat","Around And Around"]},
+          {lbl:"Encore", songs:["U.S. Blues","Shakedown Street"], enc:true}
+        ]
+      },
+      {
+        id:"1910", date:"1989-10-09", dow:"Monday",
+        venue:"Hampton Coliseum", city:"Hampton, VA",
+        badge:"Billed as 'Formerly The Warlocks' — first Dark Star since 1984",
+        sets:[
+          {lbl:"Set One", songs:["Feel Like A Stranger","Built To Last","Little Red Rooster","Ramble On Rose","We Can Run","Jack-A-Roe","Stuck Inside Of Mobile","Row Jimmy","The Music Never Stopped"]},
+          {lbl:"Set Two", songs:["Playin' In The Band > Uncle John's Band > Playin' Reprise","Dark Star > Drums","Death Don't Have No Mercy","Dear Mr. Fantasy > Hey Jude Reprise","Throwin' Stones","Good Lovin'"]},
+          {lbl:"Encore", songs:["Attics Of My Life"], enc:true}
+        ]
+      },
+      {
+        id:"1915", date:"1989-10-16", dow:"Monday",
+        venue:"Brendan Byrne Arena", city:"East Rutherford, NJ",
+        badge:"Released as 'Nightfall of Diamonds' — Dark Star > Playin' sandwich",
+        sets:[
+          {lbl:"Set One", songs:["Picasso Moon","Mississippi Half-Step Uptown Toodeloo","Feel Like A Stranger","Good Time Blues","Built To Last","Stuck Inside Of Mobile","Let It Grow","Deal"]},
+          {lbl:"Set Two", songs:["Dark Star > Playin' In The Band > Uncle John's Band > Playin' In The Band > Drums","I Will Take You Home","I Need A Miracle","Dark Star","Attics Of My Life","Playin' Reprise"]},
+          {lbl:"Encore", songs:["And We Bid You Goodnight"], enc:true}
+        ]
+      }
+    ]
+  },
+  {
+    id:"vince", name:"The Final Years", years:"1990–1995", color:"#8B2FC9",
+    shows:[
+      {
+        id:"2310", date:"1995-03-19", dow:"Sunday",
+        venue:"The Spectrum", city:"Philadelphia, PA",
+        badge:"First-ever performance of Unbroken Chain",
+        sets:[
+          {lbl:"Set One", songs:["Alabama Getaway","Walkin' Blues","So Many Roads","Easy Answers","Don't Ease Me In","Unbroken Chain"]},
+          {lbl:"Set Two", songs:["Samson And Delilah","Long Way To Go Home","Crazy Fingers","Corrina","Matilda Matilda","Drums","Space","I Need A Miracle","Stella Blue","Not Fade Away"]},
+          {lbl:"Encore", songs:["Brokedown Palace"], enc:true}
+        ]
+      },
+      {
+        id:"2348", date:"1995-07-09", dow:"Sunday",
+        venue:"Soldier Field", city:"Chicago, IL",
+        badge:"⚡ The Last Show — Jerry Garcia's final concert",
+        sets:[
+          {lbl:"Set One", songs:["Touch Of Grey","Little Red Rooster","Lazy River Road","When I Paint My Masterpiece","Childhood's End","Cumberland Blues","Promised Land"]},
+          {lbl:"Set Two", songs:["Shakedown Street","Samson And Delilah","So Many Roads","Samba In The Rain","Corrina","Drums","Space","Unbroken Chain","Sugar Magnolia"]},
+          {lbl:"Encore", songs:["Black Muddy River","Box Of Rain"], enc:true}
+        ]
+      }
+    ]
+  }
+];
+
+const ALL = ERAS.flatMap(e => e.shows.map(s => ({...s, era:e})));
+
+const YR_MAP = {};
+ALL.forEach(s => { const y = s.date.slice(0,4); (YR_MAP[y] = YR_MAP[y]||[]).push(s); });
+
+// Show of the Day — seeds on calendar date, changes daily
+function todayShow() {
+  const n = new Date();
+  const seed = n.getFullYear()*1000 + Math.floor((n - new Date(n.getFullYear(),0,0))/86400000);
+  return ALL[seed % ALL.length];
+}
+
+// ─── RENDER SHOW OF DAY ───────────────────────────────────────
+function renderSOTD() {
+  const s  = todayShow();
+  const {m, day} = pd(s.date);
+  const el = document.getElementById('sotd');
+  el.style.setProperty('--era-color', s.era.color);
+
+  const allSongs = s.sets.flatMap(set => set.enc ? [] : set.songs);
+  const top = allSongs.slice(0,5);
+  const more = allSongs.length - 5;
+
+  el.innerHTML = `
+    <div class="sotd-in">
+      <div class="sotd-date">${MOL[m-1]} ${day}, ${s.date.slice(0,4)}</div>
+      <div class="sotd-dow">${s.dow}</div>
+      <div class="sotd-venue">${s.venue}</div>
+      <div class="sotd-city">${s.city}</div>
+      <div class="sotd-era">${s.era.name} · ${s.era.years}</div>
+      <div class="sotd-songs">
+        ${top.map(song=>`<span class="sotd-song${isHi(song)?' hi':''}">${song}</span>`).join('')}
+        ${more>0?`<span class="sotd-more">+${more} more songs</span>`:''}
+      </div>
+    </div>
+    <div class="sotd-ft">
+      <span class="sotd-src">setlists.net · show #${s.id}</span>
+      <a class="sotd-listen" href="${archUrl(s.date)}" target="_blank">Listen on Archive.org ↗</a>
+    </div>`;
+  el.onclick = e => { if (e.target.classList.contains('sotd-listen')) return; navShow(s, true); };
+}
+
+// ─── RENDER ERA LIST ──────────────────────────────────────────
+function renderEras() {
+  const el = document.getElementById('era-list');
+  el.innerHTML = ERAS.map(e=>`
+    <div class="era-row" style="--era-color:${e.color}" data-id="${e.id}">
+      <div class="era-in">
+        <div class="era-name">${e.name}</div>
+        <div class="era-yrs">${e.years}</div>
+      </div>
+      <div class="era-r">
+        <span class="era-cnt">${e.shows.length} show${e.shows.length>1?'s':''}</span>
+        <span class="era-chev">›</span>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('.era-row').forEach(r=>{
+    r.onclick=()=>{
+      const e=ERAS.find(x=>x.id===r.dataset.id);
+      navList(e.name, e.years+' · '+e.shows.length+' shows', e.shows.map(s=>({...s,era:e})));
+    };
+  });
+}
+
+// ─── RENDER YEAR GRID ─────────────────────────────────────────
+function renderYears() {
+  const el = document.getElementById('yr-grid');
+  el.innerHTML = Object.keys(YR_MAP).sort().map(y=>`
+    <button class="yr-btn" data-y="${y}">
+      <span class="yr-n">${y}</span>
+      <span class="yr-c">${YR_MAP[y].length} show${YR_MAP[y].length>1?'s':''}</span>
+    </button>`).join('');
+  el.querySelectorAll('.yr-btn').forEach(b=>{
+    b.onclick=()=>{ const y=b.dataset.y; navList(y, YR_MAP[y].length+' shows', YR_MAP[y]); };
+  });
+}
+
+// ─── RENDER SHOW LIST ─────────────────────────────────────────
+let _curShows = [];
+function renderShowList(shows) {
+  _curShows = shows;
+  const el = document.getElementById('show-list');
+  el.innerHTML = shows.map((s,i)=>{
+    const {m,day,y} = pd(s.date);
+    return `
+      <div class="show-row" data-i="${i}">
+        <div class="dt-col">
+          <span class="dt-m">${MOS[m-1]}</span>
+          <div class="dt-d">${day}</div>
+          <span class="dt-y">${y}</span>
+        </div>
+        <div class="sh-info">
+          <div class="sh-venue">${s.venue}</div>
+          <div class="sh-city">${s.city}</div>
+          ${s.badge?`<div class="sh-badge">${s.badge}</div>`:''}
+        </div>
+        <div class="sh-chev">›</div>
+      </div>`;
+  }).join('');
+  el.querySelectorAll('.show-row').forEach(r=>{
+    r.onclick=()=>navShow(_curShows[+r.dataset.i]);
+  });
+}
+
+// ─── RENDER SHOW DETAIL ───────────────────────────────────────
+function renderShowDetail(s) {
+  const setHTML = s.sets.map(set=>{
+    const songs = set.songs.map((song,i)=>`
+      <div class="song-row">
+        <span class="sn">${set.enc?'':i+1}</span>
+        <span class="s${isHi(song)?' hi':''}${set.enc?' en':''}">${song}</span>
+      </div>`).join('');
+    return `<div class="set-block"><div class="set-lbl${set.enc?' enc':''}">${set.lbl}</div>${songs}</div>`;
+  }).join('');
+
+  document.getElementById('show-content').innerHTML = `
+    <div class="show-hero" style="--era-color:${s.era.color}">
+      <div class="sh-date">${fmtL(s.date)}</div>
+      <div class="sh-dow">${s.dow}</div>
+      <div class="sh-venue-big">${s.venue}</div>
+      <div class="sh-city-big">${s.city}</div>
+      <div class="sh-era-lbl">${s.era.name} · ${s.era.years}</div>
+      ${s.badge?`<div class="sh-badge-big">${s.badge}</div>`:''}
+    </div>
+    <div class="setlist-wrap">
+      ${setHTML}
+      <div class="sh-footer">
+        <div class="sh-ft-src">Source: setlists.net · Show ID #${s.id}</div>
+        <div class="sh-ft-btns">
+          <a class="arch-btn" href="${archUrl(s.date)}" target="_blank"><span>Listen on Archive.org ↗</span></a>
+          <a class="arch-btn" href="${slUrl(s.id)}" target="_blank"><span>View on setlists.net ↗</span></a>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── NAV ──────────────────────────────────────────────────────
+const $home = document.getElementById('home');
+const $list = document.getElementById('list-view');
+const $show = document.getElementById('show-view');
+let _showBack = 'list'; // where show back btn goes
+
+function navList(title, sub, shows) {
+  document.getElementById('list-t').textContent = title;
+  document.getElementById('list-s').textContent = sub;
+  renderShowList(shows);
+  $home.classList.add('l');
+  $list.classList.remove('r','l');
+  $show.classList.add('r'); $show.classList.remove('l');
+}
+
+function navShow(s, fromHome=false) {
+  renderShowDetail(s);
+  document.getElementById('show-t').textContent = s.venue;
+  document.getElementById('show-s').textContent = fmtL(s.date);
+  _showBack = fromHome ? 'home' : 'list';
+  if (fromHome) { $home.classList.add('l'); $list.classList.add('r'); }
+  else { $list.classList.add('l'); $list.classList.remove('r'); }
+  $show.classList.remove('r','l');
+}
+
+document.getElementById('list-back').onclick = () => {
+  $list.classList.add('r'); $list.classList.remove('l');
+  $home.classList.remove('l');
+};
+document.getElementById('show-back').onclick = () => {
+  $show.classList.add('r');
+  if (_showBack === 'home') {
+    $home.classList.remove('l');
+    $list.classList.add('r'); $list.classList.remove('l');
+  } else {
+    $list.classList.remove('l'); $list.classList.add('r');
+    $list.classList.remove('r');
+  }
+};
+
+// Tabs
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('tp-'+btn.dataset.tp).classList.add('on');
+  };
+});
+
+// ─── INIT ─────────────────────────────────────────────────────
+renderSOTD();
+renderEras();
+renderYears();
+</script>
+</body>
+</html>
