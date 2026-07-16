@@ -1,0 +1,6 @@
+# Never commit secrets or local notes
+Nexus Key.txt
+Tor.txt
+errors.txt
+*.token
+.env
