@@ -332,20 +332,20 @@ const VENUE_WIKI = {
 async function venuePhoto(venue) {
   const title = VENUE_WIKI[venue];
   if (!title) return null;
-  const key = 'wimg:' + title;
+  const key = 'wimg2:' + title;   // v2 key: v1 cached broken URLs
   try {
     const c = localStorage.getItem(key);
     if (c === 'x') return null;           // negative cache
     if (c) return JSON.parse(c);
   } catch(e){}
   try {
-    const r = await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(title));
+    const r = await fetch('https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=thumbnail&pithumbsize=800&format=json&origin=*&redirects=1&titles=' + encodeURIComponent(title));
     if (!r.ok) throw 0;
     const j = await r.json();
-    let src = j.thumbnail && j.thumbnail.source;
+    const page = j.query && j.query.pages && Object.values(j.query.pages)[0];
+    const src = page && page.thumbnail && page.thumbnail.source;
     if (!src) throw 0;
-    src = src.replace(/\/(\d+)px-/, '/800px-'); // request a larger thumb
-    const out = { src, page: (j.content_urls && j.content_urls.desktop && j.content_urls.desktop.page) || ('https://en.wikipedia.org/wiki/' + encodeURIComponent(title)) };
+    const out = { src, page: 'https://en.wikipedia.org/wiki/' + encodeURIComponent(title) };
     try { localStorage.setItem(key, JSON.stringify(out)); } catch(e){}
     return out;
   } catch(e) {

@@ -1,5 +1,5 @@
 // Dead Time Machine service worker
-const VER = 'dtm-v1';
+const VER = 'dtm-v2';
 const CORE = ['./', 'index.html', 'shows-data.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
