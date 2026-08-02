@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#090909">
+<meta name="theme-color" content="#2a231c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="Every Grateful Dead show, 1965–1995. Setlists, streams, and a time machine.">
@@ -13,7 +13,7 @@
 <title>Dead Time Machine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@400;500;600&family=Piedra&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
@@ -22,7 +22,11 @@
   --gold:#C9943A;--amber:#E8A820;--cream:#EDE5D5;
   --dim:#8b8478;--faint:#5c574e;
   --teal:#3AA08C;--purple:#8A62BC;--crimson:#C24A4A;
+  /* header surfaces — deliberately lighter than the body so headers read as paper, not void */
+  --hdr-a:#3d342a;--hdr-b:#2a231c;--hdr-c:#1d1815;--hdr-line:#50432f;
+  --nav-bg:rgba(42,35,28,.9);--sheet:#241f19;--sheet-2:#2e2721;
   --font-display:'Cinzel',serif;--font-body:'Barlow',sans-serif;--font-ui:'Barlow Condensed',sans-serif;
+  --font-wm:'Piedra',var(--font-display);
   --t:.22s cubic-bezier(.4,0,.2,1);
   --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
 }
@@ -36,28 +40,27 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 .view.r{transform:translateX(100%);opacity:0;pointer-events:none}
 .view.l{transform:translateX(-28%);opacity:0;pointer-events:none}
 
-/* NAV BAR */
-.nav{position:sticky;top:0;z-index:20;background:rgba(9,9,9,.95);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:var(--safe-t) 16px 0;height:calc(54px + var(--safe-t));display:flex;align-items:center;gap:12px}
-.back{background:none;border:none;color:var(--gold);font-size:26px;cursor:pointer;padding:8px 10px 8px 0;flex-shrink:0;font-family:var(--font-ui);line-height:1}
-.nav-t{font-family:var(--font-display);font-size:14px;font-weight:700;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-s{font-family:var(--font-ui);font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:1px}
+/* NAV BAR — compact, lit warm so it sits above the black body */
+.nav{position:sticky;top:0;z-index:20;background:var(--nav-bg);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--hdr-line);padding:var(--safe-t) 14px 0;height:calc(46px + var(--safe-t));display:flex;align-items:center;gap:8px}
+.back{background:none;border:none;color:var(--amber);font-size:24px;cursor:pointer;padding:6px 10px 6px 0;flex-shrink:0;font-family:var(--font-ui);line-height:1}
+.nav-txt{min-width:0;flex:1}
+.nav-t{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.nav-s{font-family:var(--font-ui);font-size:11px;color:#a1968a;letter-spacing:1px;line-height:1.2}
 
 /* HOME */
 #home{padding-bottom:calc(72px + var(--safe-b))}
 
-.hero{padding:calc(54px + var(--safe-t)) 20px 34px;text-align:center;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0f0f0f 0%,var(--black) 100%);position:relative;overflow:hidden}
-.hero-art{position:absolute;inset:-40% -20%;pointer-events:none;opacity:.5;background:
-  radial-gradient(circle at 30% 20%,rgba(201,148,58,.14),transparent 42%),
-  radial-gradient(circle at 75% 65%,rgba(138,98,188,.12),transparent 45%),
-  radial-gradient(circle at 55% 35%,rgba(58,160,140,.10),transparent 38%)}
-.hero-spiral{position:absolute;left:50%;top:46%;width:340px;height:340px;transform:translate(-50%,-50%);opacity:.16;pointer-events:none;animation:spin 90s linear infinite}
-@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.hero-spiral{animation:none}}
+/* HERO — one compact band: the wordmark and a single line of context */
+.hero{padding:calc(12px + var(--safe-t)) 16px 11px;text-align:center;border-bottom:1px solid var(--hdr-line);background:linear-gradient(172deg,var(--hdr-a) 0%,var(--hdr-b) 56%,var(--hdr-c) 100%);position:relative;overflow:hidden}
+.hero-art{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(ellipse at 50% 128%,rgba(232,168,32,.20),transparent 62%),
+  radial-gradient(ellipse at 12% 0%,rgba(138,98,188,.14),transparent 55%),
+  radial-gradient(ellipse at 90% 8%,rgba(58,160,140,.12),transparent 52%)}
 .hero>*{position:relative}
-.hero-eye{font-family:var(--font-ui);font-weight:500;font-size:12px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:16px}
-.hero-h{font-family:var(--font-display);font-size:clamp(30px,9vw,46px);font-weight:900;color:var(--cream);letter-spacing:.03em;line-height:1.05;text-shadow:0 0 60px rgba(201,148,58,.18)}
-.hero-h em{display:block;font-style:normal;color:var(--gold);font-weight:400;font-size:.62em;letter-spacing:.2em;margin-bottom:6px}
-.hero-sub{font-family:var(--font-ui);font-weight:400;font-size:12px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;margin-top:14px}
+.wordmark{display:block;width:100%;max-width:290px;height:auto;margin:0 auto;filter:drop-shadow(0 2px 5px rgba(0,0,0,.55))}
+.wordmark text{font-family:var(--font-wm)}
+.hero-sub{font-family:var(--font-ui);font-weight:500;font-size:11px;color:#b3a696;letter-spacing:2.6px;text-transform:uppercase;margin-top:6px}
+.hero-sub b{color:var(--amber);font-weight:600}
 
 /* SECTION HEADERS */
 .sec{padding:28px 16px 0}
@@ -146,21 +149,27 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 .sh-chev{font-family:var(--font-ui);font-size:18px;color:var(--subtle);padding:14px 0 14px 8px;align-self:center;flex-shrink:0}
 
 /* SHOW DETAIL */
-.show-hero{padding:24px 20px 22px;border-bottom:1px solid var(--border);position:relative;background:linear-gradient(180deg,#121212 0%,var(--black) 100%);overflow:hidden}
+.show-hero{padding:15px 18px 16px;border-bottom:1px solid var(--hdr-line);position:relative;background:linear-gradient(172deg,var(--hdr-a) 0%,var(--hdr-b) 52%,var(--hdr-c) 100%);overflow:hidden}
 .show-hero::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--era-color,var(--gold));z-index:2}
 .hero-photo{position:absolute;inset:0;background-size:cover;background-position:center 30%;opacity:0;transition:opacity .6s ease;z-index:0}
-.hero-photo.on{opacity:.34}
-.hero-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,9,9,.28) 0%,rgba(9,9,9,.86) 78%,var(--black) 100%)}
+.hero-photo.on{opacity:.5}
+.hero-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(29,24,21,.2) 0%,rgba(29,24,21,.72) 74%,var(--hdr-c) 100%)}
 .hero-tint{position:absolute;inset:0;z-index:0;opacity:.5;background:radial-gradient(circle at 80% 10%,var(--era-color,var(--gold)) 0%,transparent 52%);mix-blend-mode:overlay}
 .show-hero>.sh-c{position:relative;z-index:1}
 .photo-cred{position:absolute;right:10px;bottom:8px;z-index:3;font-family:var(--font-ui);font-size:10px;letter-spacing:.5px;color:rgba(237,229,213,.55);text-decoration:none;background:rgba(9,9,9,.5);padding:2px 7px;border-radius:4px;opacity:0;transition:opacity .6s ease}
 .photo-cred.on{opacity:1}
-.sh-date{font-family:var(--font-display);font-size:clamp(20px,5.5vw,28px);font-weight:900;color:var(--cream);font-variant-numeric:tabular-nums}
-.sh-dow{font-family:var(--font-ui);font-size:12px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
-.sh-venue-big{font-size:17px;color:var(--cream);margin-top:14px;line-height:1.3;font-weight:400}
-.sh-city-big{font-family:var(--font-ui);font-size:14px;color:var(--teal);margin-top:5px;letter-spacing:.5px}
-.sh-era-lbl{font-family:var(--font-ui);font-size:11px;color:var(--dim);margin-top:10px;letter-spacing:1.5px;text-transform:uppercase}
-.sh-badge-big{display:inline-block;margin-top:10px;background:rgba(194,74,74,.13);border:1px solid rgba(194,74,74,.35);border-radius:4px;padding:4px 10px;font-family:var(--font-ui);font-size:11px;color:var(--crimson);letter-spacing:.5px}
+.sh-date{font-family:var(--font-display);font-size:clamp(19px,5.2vw,26px);font-weight:900;color:var(--cream);font-variant-numeric:tabular-nums;line-height:1.15}
+.sh-dow{font-family:var(--font-ui);font-size:12px;color:var(--amber);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.sh-venue-big{font-size:17px;color:var(--cream);margin-top:9px;line-height:1.3;font-weight:400}
+.sh-city-big{font-family:var(--font-ui);font-size:14px;color:#5cc4ad;margin-top:3px;letter-spacing:.5px}
+.sh-era-lbl{font-family:var(--font-ui);font-size:11px;color:#a1968a;margin-top:6px;letter-spacing:1.5px;text-transform:uppercase}
+.sh-badge-big{display:inline-block;margin-top:8px;background:rgba(194,74,74,.13);border:1px solid rgba(194,74,74,.35);border-radius:4px;padding:4px 10px;font-family:var(--font-ui);font-size:11px;color:#e07a7a;letter-spacing:.5px}
+
+/* venue guide trigger */
+.venue-btn{display:inline-flex;align-items:center;gap:7px;margin-top:11px;background:rgba(252,237,203,.1);border:1px solid rgba(232,168,32,.42);border-radius:20px;padding:7px 14px;cursor:pointer;font-family:var(--font-ui);font-size:12px;font-weight:500;color:#F4C866;letter-spacing:1.4px;text-transform:uppercase;transition:background var(--t)}
+.venue-btn:active{background:rgba(232,168,32,.24)}
+.venue-btn .vb-i{font-size:13px;line-height:1}
+.nav-act{background:none;border:none;color:var(--amber);font-size:19px;cursor:pointer;padding:8px 2px 8px 10px;flex-shrink:0;line-height:1}
 
 /* PLAYER */
 .player-blk{margin:18px 20px 0}
@@ -198,6 +207,62 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 .load-err{padding:60px 30px;text-align:center;font-family:var(--font-ui);font-size:13px;color:var(--dim);letter-spacing:1px;line-height:2}
 .load-err button{background:none;border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-family:var(--font-ui);font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:10px 22px;margin-top:14px;cursor:pointer}
 
+/* ─── VENUE STAT GUIDE (bottom sheet) ─── */
+.sheet-bd{position:fixed;inset:0;z-index:40;background:rgba(8,6,4,.68);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .26s ease}
+.sheet-bd.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;display:flex;flex-direction:column;max-height:min(90vh,760px);
+  background:var(--sheet);border-top:1px solid var(--hdr-line);border-radius:18px 18px 0 0;
+  box-shadow:0 -18px 44px rgba(0,0,0,.6);transform:translateY(102%);
+  transition:transform .32s cubic-bezier(.32,.72,0,1)}
+.sheet.on{transform:none}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+.sheet-grab{width:36px;height:4px;border-radius:2px;background:#5b4e3d;margin:9px auto 0;flex-shrink:0}
+.sheet-hd{display:flex;align-items:flex-start;gap:10px;padding:10px 18px 12px;border-bottom:1px solid var(--hdr-line);flex-shrink:0;
+  background:linear-gradient(180deg,var(--sheet-2),var(--sheet))}
+.sheet-hd-txt{flex:1;min-width:0}
+.sheet-eye{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2.6px;text-transform:uppercase;color:var(--amber)}
+.sheet-name{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--cream);line-height:1.22;margin-top:3px}
+.sheet-city{font-family:var(--font-ui);font-size:12px;color:#5cc4ad;letter-spacing:.6px;margin-top:2px}
+.sheet-x{background:rgba(255,255,255,.06);border:1px solid var(--hdr-line);border-radius:50%;width:30px;height:30px;color:#c2b8a8;font-size:13px;cursor:pointer;flex-shrink:0;line-height:1}
+.sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 18px calc(22px + var(--safe-b))}
+
+.vs-aka{font-family:var(--font-ui);font-size:11px;color:var(--dim);letter-spacing:.4px;line-height:1.6;margin-top:12px;font-style:italic}
+.vs-sec{font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);margin:22px 0 11px;display:flex;align-items:center;gap:8px}
+.vs-sec::after{content:'';flex:1;height:1px;background:var(--hdr-line)}
+
+.vs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hdr-line);border:1px solid var(--hdr-line);border-radius:9px;overflow:hidden;margin-top:16px}
+.vs-cell{background:var(--sheet-2);padding:11px 8px 10px;text-align:center}
+.vs-n{font-family:var(--font-display);font-size:19px;font-weight:900;color:var(--cream);font-variant-numeric:tabular-nums;line-height:1.1}
+.vs-n small{font-size:11px;font-weight:400;color:var(--dim)}
+.vs-l{font-family:var(--font-ui);font-size:10px;color:#a1968a;letter-spacing:1.3px;text-transform:uppercase;margin-top:3px}
+
+.vs-bar{display:flex;align-items:center;gap:9px;padding:6px 0}
+.vs-bar-n{font-family:var(--font-ui);font-size:11px;color:var(--faint);width:15px;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums}
+.vs-bar-b{flex:1;min-width:0;position:relative;height:24px;display:flex;align-items:center;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.035)}
+.vs-bar-f{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(232,168,32,.42),rgba(232,168,32,.14));border-right:1px solid rgba(232,168,32,.55)}
+.vs-bar-t{position:relative;font-size:13.5px;color:var(--cream);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vs-bar-c{font-family:var(--font-ui);font-size:11.5px;color:var(--amber);font-variant-numeric:tabular-nums;flex-shrink:0;width:52px;text-align:right;white-space:nowrap}
+
+.vs-chips{display:flex;flex-wrap:wrap;gap:6px}
+.vs-chip{font-size:12.5px;color:#ded4c1;background:var(--sheet-2);border:1px solid var(--hdr-line);border-radius:14px;padding:5px 11px;line-height:1.25}
+.vs-chip b{font-family:var(--font-ui);color:var(--amber);font-weight:500;font-size:11px;margin-left:4px}
+.vs-chip.rare{border-color:rgba(138,98,188,.5);color:#cdbce6}
+
+.vs-note{font-family:var(--font-ui);font-size:11.5px;color:var(--dim);letter-spacing:.3px;line-height:1.6;margin-top:8px}
+
+.vs-shows{display:flex;flex-direction:column;border:1px solid var(--hdr-line);border-radius:9px;overflow:hidden}
+.vs-show{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sheet-2);border-bottom:1px solid var(--hdr-line);cursor:pointer;text-align:left;border-left:none;border-right:none;border-top:none;width:100%;font:inherit}
+.vs-show:last-child{border-bottom:none}
+.vs-show:active{background:#39312a}
+.vs-show-d{font-family:var(--font-display);font-size:13.5px;font-weight:700;color:var(--cream);font-variant-numeric:tabular-nums;width:104px;flex-shrink:0}
+.vs-show-m{font-family:var(--font-ui);font-size:11.5px;color:#a1968a;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.4px}
+.vs-show-c{font-family:var(--font-ui);font-size:16px;color:var(--faint);flex-shrink:0}
+.vs-show.here{background:rgba(232,168,32,.11)}
+.vs-show.here .vs-show-d{color:var(--amber)}
+
+.vs-src{font-family:var(--font-ui);font-size:11px;color:var(--faint);letter-spacing:.4px;line-height:1.75;margin-top:22px;padding-top:14px;border-top:1px solid var(--hdr-line)}
+.vs-src a{color:var(--gold);text-decoration:none}
+
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:var(--black)}
 ::-webkit-scrollbar-thumb{background:var(--subtle);border-radius:2px}
@@ -207,21 +272,26 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 
 <!-- HOME -->
 <div class="view" id="home">
-  <div class="hero">
+  <header class="hero">
     <div class="hero-art"></div>
-    <svg class="hero-spiral" viewBox="0 0 200 200" aria-hidden="true">
-      <g fill="none" stroke="#C9943A" stroke-width="1">
-        <circle cx="100" cy="100" r="30" opacity=".9"/>
-        <circle cx="100" cy="100" r="52" opacity=".65"/>
-        <circle cx="100" cy="100" r="74" opacity=".45"/>
-        <circle cx="100" cy="100" r="96" opacity=".3"/>
-        <path d="M100 4 L100 196 M4 100 L196 100 M32 32 L168 168 M168 32 L32 168" opacity=".35"/>
-      </g>
-    </svg>
-    <div class="hero-eye">Grateful Dead</div>
-    <h1 class="hero-h"><em>The</em>Time Machine</h1>
-    <p class="hero-sub">Every night · Every song · 1965–1995</p>
-  </div>
+    <h1>
+      <svg class="wordmark" viewBox="0 0 300 46" role="img" aria-label="Grateful Dead">
+        <defs>
+          <path id="wm-arc" d="M10,38 Q150,7 290,38" fill="none"/>
+          <linearGradient id="wm-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FCEDCB"/>
+            <stop offset="46%" stop-color="#E8A820"/>
+            <stop offset="100%" stop-color="#A9661A"/>
+          </linearGradient>
+        </defs>
+        <text font-size="27" letter-spacing="1" text-anchor="middle"
+              fill="url(#wm-fill)" stroke="#150d04" stroke-width="2.6" paint-order="stroke">
+          <textPath href="#wm-arc" startOffset="50%">GRATEFUL DEAD</textPath>
+        </text>
+      </svg>
+    </h1>
+    <p class="hero-sub">The Time Machine · <b>1965–1995</b></p>
+  </header>
 
   <div class="sec">
     <div class="sec-eye">Show of the Day</div>
@@ -259,7 +329,7 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 <div class="view r" id="list-view">
   <div class="nav">
     <button class="back" id="list-back" aria-label="Back">‹</button>
-    <div><div class="nav-t" id="list-t"></div><div class="nav-s" id="list-s"></div></div>
+    <div class="nav-txt"><div class="nav-t" id="list-t"></div><div class="nav-s" id="list-s"></div></div>
   </div>
   <div class="show-list" id="show-list"></div>
 </div>
@@ -268,10 +338,26 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 <div class="view r" id="show-view">
   <div class="nav">
     <button class="back" id="show-back" aria-label="Back">‹</button>
-    <div><div class="nav-t" id="show-t"></div><div class="nav-s" id="show-s"></div></div>
+    <div class="nav-txt"><div class="nav-t" id="show-t"></div><div class="nav-s" id="show-s"></div></div>
+    <button class="nav-act" id="nav-venue" aria-label="Venue guide" hidden>◎</button>
   </div>
   <div id="show-content"></div>
 </div>
+
+<!-- VENUE STAT GUIDE -->
+<div class="sheet-bd" id="sheet-bd"></div>
+<section class="sheet" id="venue-sheet" role="dialog" aria-modal="true" aria-labelledby="vs-name" hidden>
+  <div class="sheet-grab"></div>
+  <div class="sheet-hd">
+    <div class="sheet-hd-txt">
+      <div class="sheet-eye">Venue Guide</div>
+      <div class="sheet-name" id="vs-name"></div>
+      <div class="sheet-city" id="vs-city"></div>
+    </div>
+    <button class="sheet-x" id="sheet-x" aria-label="Close">✕</button>
+  </div>
+  <div class="sheet-body" id="vs-body"></div>
+</section>
 
 <script>
 // ─── DATA is loaded async from shows-data.json (same ERAS structure the scraper produces) ───
@@ -288,6 +374,8 @@ const MOS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","
 const MOL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const pd = d => { const [y,m,day] = d.split('-').map(Number); return {y,m,day}; };
 const fmtL = d => { const {y,m,day} = pd(d); return `${MOL[m-1]} ${day}, ${y}`; };
+const fmtS = d => { const {y,m,day} = pd(d); return `${MOL[m-1].slice(0,3)} ${day}, ${y}`; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const archUrl = d => `https://archive.org/search?query=collection%3A%22GratefulDead%22+AND+date%3A${d}`;
 const slUrl = id => `https://www.setlists.net/?show_id=${id}`;
 
@@ -353,6 +441,208 @@ async function venuePhoto(venue) {
     return null;
   }
 }
+
+// ═══ VENUE STAT GUIDE ═══════════════════════════════════════════════
+// A DeadBase-style venue index (dates played, show counts, song-frequency
+// tables), computed from the local archive so it works offline.
+
+// Buildings the band played under more than one name. Merged the way DeadBase
+// treats them: one venue, noted with its former name.
+const VENUE_RENAME = {
+  "Oakland Auditorium Arena": "Henry J. Kaiser Convention Center"
+};
+
+// Venue identity is name + city: "Fox Theater" is two different buildings
+// (St. Louis and Atlanta), while "Fox Theater"/"Fox Theatre" in St. Louis is one.
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '');
+const venueName = s => VENUE_RENAME[s.venue] || s.venue;
+const venueKey = s => slug(venueName(s)) + '|' + slug(s.city);
+
+// The scrape pulls in page furniture alongside the songs — lineup credits
+// ("Bass: Phil Lesh"), site chrome ("Comment on this Show!") and fan comments.
+// Strip the decorations off real titles, then drop everything that isn't one.
+const cleanSong = s => s
+  .replace(/^E:\s*/i, '')              // encore marker
+  .replace(/\s+\d{1,2}:\d{2}$/, '')    // track time copied from a tracklist
+  .replace(/[>\s]+$/, '')              // segue arrow
+  .trim();
+const NOT_A_SONG = /!!|:\s|:\s*$|^[.(]|,.*!$|^\S+(\s+\S+){4,}\.$|copyright|setlist|compliments of|questions\/comments|comment on this show|^band (name|config)/i;
+const isRealSong = s => {
+  const n = cleanSong(s);
+  return n.length > 1 && n.length <= 44 && !NOT_A_SONG.test(n);
+};
+
+const SEGMENTS = new Set(['drums', 'space', 'tuning']);
+
+let _venues = null;
+function venueIndex() {
+  if (_venues) return _venues;
+  const byKey = new Map();
+  const firstSeen = new Map();   // song → { date, key } first appearance in the archive
+  const songVenues = new Map();  // song → Set of venue keys
+  const label = new Map();       // song → nicest display spelling
+  const plays = new Map();       // song → total nights across the archive
+
+  for (const s of [...ALL].sort((a, b) => a.date.localeCompare(b.date))) {
+    const k = venueKey(s);
+    let v = byKey.get(k);
+    if (!v) byKey.set(k, v = { key: k, name: venueName(s), city: s.city, aka: new Set(), shows: [], songs: new Map() });
+    if (s.venue !== v.name) v.aka.add(s.venue);
+    v.shows.push(s);
+
+    const seen = new Set();
+    for (const set of s.sets) for (const raw of set.songs) {
+      if (!isRealSong(raw)) continue;
+      const name = cleanSong(raw), id = name.toLowerCase();
+      if (seen.has(id)) continue;            // count nights played, not reprises
+      seen.add(id);
+      // prefer Title Case spellings over sloppy ones
+      if (!label.has(id) || (/[a-z] [A-Z]/.test(name) && !/[a-z] [a-z]/.test(name))) label.set(id, name);
+      plays.set(id, (plays.get(id) || 0) + 1);
+      v.songs.set(id, (v.songs.get(id) || 0) + 1);
+      if (!firstSeen.has(id)) firstSeen.set(id, { date: s.date, key: k });
+      let sv = songVenues.get(id);
+      if (!sv) songVenues.set(id, sv = new Set());
+      sv.add(k);
+    }
+  }
+
+  const ranked = [...byKey.values()].sort((a, b) => b.shows.length - a.shows.length || a.name.localeCompare(b.name));
+  ranked.forEach((v, i) => { v.rank = i + 1; });
+  _venues = { byKey, ranked, firstSeen, songVenues, label, plays, total: byKey.size };
+  return _venues;
+}
+
+// Consecutive nights, e.g. a five-night stand at the Garden.
+function nightRuns(dates) {
+  const out = [];
+  let run = [dates[0]];
+  for (let i = 1; i < dates.length; i++) {
+    const gap = (Date.parse(dates[i] + 'T00:00:00Z') - Date.parse(run[run.length - 1] + 'T00:00:00Z')) / 864e5;
+    if (gap === 1) run.push(dates[i]); else { out.push(run); run = [dates[i]]; }
+  }
+  out.push(run);
+  return out;
+}
+
+function venueStats(show) {
+  const ix = venueIndex();
+  const v = ix.byKey.get(venueKey(show));
+  const dates = v.shows.map(s => s.date);
+  const runs = nightRuns(dates);
+  const years = new Set(dates.map(d => d.slice(0, 4)));
+
+  // Structural segments top the chart at literally every venue, which tells you
+  // nothing about the room. Counted in the song total, left out of the table.
+  const top = [...v.songs.entries()]
+    .filter(([id]) => !SEGMENTS.has(id))
+    .sort((a, b) => b[1] - a[1] || ix.label.get(a[0]).localeCompare(ix.label.get(b[0])))
+    .slice(0, 8)
+    .map(([id, n]) => ({ name: ix.label.get(id), n }));
+
+  const debuts = [...v.songs.keys()]
+    .filter(id => ix.firstSeen.get(id).key === v.key)
+    .sort((a, b) => ix.plays.get(b) - ix.plays.get(a))
+    .slice(0, 14)
+    .map(id => ({ name: ix.label.get(id), n: ix.plays.get(id), date: ix.firstSeen.get(id).date }));
+
+  const exclusive = [...v.songs.keys()]
+    .filter(id => ix.songVenues.get(id).size === 1)
+    .sort((a, b) => ix.plays.get(b) - ix.plays.get(a))
+    .slice(0, 14)
+    .map(id => ({ name: ix.label.get(id), n: ix.plays.get(id) }));
+
+  return {
+    v, dates, years,
+    rank: v.rank, venueCount: ix.total,
+    longestRun: Math.max(...runs.map(r => r.length)),
+    runCount: runs.length,
+    distinct: v.songs.size,
+    top, debuts, exclusive
+  };
+}
+
+// ─── SHEET ───
+const $sheet = document.getElementById('venue-sheet');
+const $sheetBd = document.getElementById('sheet-bd');
+let _sheetShow = null;
+
+function openVenueSheet(show) {
+  if (!ALL.length) return;
+  _sheetShow = show;
+  const st = venueStats(show);
+  const pct = st.top.length ? st.top[0].n : 1;
+
+  document.getElementById('vs-name').textContent = st.v.name;
+  document.getElementById('vs-city').textContent = st.v.city;
+
+  const bars = st.top.map((s, i) => `
+    <div class="vs-bar">
+      <span class="vs-bar-n">${i + 1}</span>
+      <span class="vs-bar-b"><span class="vs-bar-f" style="width:${Math.round(s.n / pct * 100)}%"></span><span class="vs-bar-t">${esc(s.name)}</span></span>
+      <span class="vs-bar-c">${s.n}&nbsp;night${s.n > 1 ? 's' : ''}</span>
+    </div>`).join('');
+
+  const chips = (list, cls, suffix) => list.map(s =>
+    `<span class="vs-chip${cls}">${esc(s.name)}<b>${suffix(s)}</b></span>`).join('');
+
+  document.getElementById('vs-body').innerHTML = `
+    ${st.v.aka.size ? `<div class="vs-aka">Also played here as ${[...st.v.aka].map(esc).join(' · ')}</div>` : ''}
+
+    <div class="vs-grid">
+      <div class="vs-cell"><div class="vs-n">${st.dates.length}</div><div class="vs-l">Shows</div></div>
+      <div class="vs-cell"><div class="vs-n"><small>#</small>${st.rank}</div><div class="vs-l">of ${st.venueCount} venues</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.years.size}</div><div class="vs-l">Years</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.dates[0].slice(0, 4)}</div><div class="vs-l">First</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.dates[st.dates.length - 1].slice(0, 4)}</div><div class="vs-l">Last</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.longestRun}</div><div class="vs-l">Longest run</div></div>
+    </div>
+    <div class="vs-note">${st.dates.length === 1 ? 'A one-night stop' : `${st.dates.length} nights across ${st.runCount} visit${st.runCount > 1 ? 's' : ''}`} · ${fmtL(st.dates[0])} → ${fmtL(st.dates[st.dates.length - 1])} · ${st.distinct} different songs</div>
+
+    ${st.top.length ? `<div class="vs-sec">Most played here</div>${bars}
+      <div class="vs-note">Drums, Space and tuning left out of the table.</div>` : ''}
+
+    ${st.debuts.length ? `<div class="vs-sec">First turned up here</div>
+      <div class="vs-chips">${chips(st.debuts, '', s => s.date.slice(0, 4))}</div>
+      <div class="vs-note">Earliest appearance anywhere in this archive.</div>` : ''}
+
+    ${st.exclusive.length ? `<div class="vs-sec">Played nowhere else</div>
+      <div class="vs-chips">${chips(st.exclusive, ' rare', s => '×' + s.n)}</div>` : ''}
+
+    <div class="vs-sec">Every night here</div>
+    <div class="vs-shows">
+      ${st.v.shows.map((s, i) => `
+        <button class="vs-show${s.date === show.date ? ' here' : ''}" data-i="${i}">
+          <span class="vs-show-d">${fmtS(s.date)}</span>
+          <span class="vs-show-m">${s.dow}${s.date === show.date ? ' · you are here' : ''}</span>
+          <span class="vs-show-c">›</span>
+        </button>`).join('')}
+    </div>
+
+    <div class="vs-src">Compiled from the ${ALL.length.toLocaleString()} shows in this archive (setlists.net), in the spirit of the
+      <a href="https://www.deadbase.com" target="_blank" rel="noopener">DeadBase</a> venue index — the canonical printed reference for
+      Grateful Dead show and song statistics. Counts reflect what this archive holds, not a definitive tally.</div>`;
+
+  document.getElementById('vs-body').querySelectorAll('.vs-show').forEach(b => {
+    b.onclick = () => { const s = st.v.shows[+b.dataset.i]; closeVenueSheet(); if (s.date !== show.date) navShow(s, _showBack === 'home'); };
+  });
+
+  $sheet.hidden = false;
+  document.getElementById('vs-body').scrollTop = 0;
+  requestAnimationFrame(() => { $sheet.classList.add('on'); $sheetBd.classList.add('on'); });
+}
+
+function closeVenueSheet() {
+  if (!$sheet.classList.contains('on')) return;
+  $sheet.classList.remove('on');
+  $sheetBd.classList.remove('on');
+  setTimeout(() => { if (!$sheet.classList.contains('on')) $sheet.hidden = true; }, 340);
+}
+
+$sheetBd.onclick = closeVenueSheet;
+document.getElementById('sheet-x').onclick = closeVenueSheet;
+addEventListener('keydown', e => { if (e.key === 'Escape') closeVenueSheet(); });
+document.getElementById('nav-venue').onclick = () => { if (_curShow) openVenueSheet(_curShow); };
 
 // ─── ARCHIVE.ORG: find the best recording for a date ───
 async function bestRecording(date) {
@@ -506,6 +796,7 @@ document.getElementById('srch-in').addEventListener('input', e=>{
 
 // ─── SHOW DETAIL ───
 function renderShowDetail(s) {
+  const nShows = (venueIndex().byKey.get(venueKey(s)) || {shows:[s]}).shows.length;
   const setHTML = s.sets.map(set=>{
     const songs = set.songs.map((song,i)=>`
       <div class="song-row">
@@ -527,6 +818,7 @@ function renderShowDetail(s) {
         <div class="sh-city-big">${s.city}</div>
         <div class="sh-era-lbl">${s.era.name} · ${s.era.years}</div>
         ${s.badge?`<div class="sh-badge-big">${s.badge}</div>`:''}
+        <button class="venue-btn" id="venue-btn"><span class="vb-i">◎</span>Venue guide${nShows>1?` · ${nShows} shows here`:''}</button>
       </div>
     </div>
     <div class="player-blk" id="player-blk">
@@ -542,6 +834,8 @@ function renderShowDetail(s) {
         </div>
       </div>
     </div>`;
+
+  document.getElementById('venue-btn').onclick = () => openVenueSheet(s);
 
   // venue photo (async, graceful fallback to era art)
   venuePhoto(s.venue).then(p=>{
@@ -576,6 +870,7 @@ const $home = document.getElementById('home');
 const $list = document.getElementById('list-view');
 const $show = document.getElementById('show-view');
 let _showBack = 'list';
+let _curShow = null;
 
 function navList(title, sub, shows) {
   document.getElementById('list-t').textContent = title;
@@ -588,9 +883,11 @@ function navList(title, sub, shows) {
 }
 
 function navShow(s, fromHome=false) {
+  _curShow = s;
   renderShowDetail(s);
   document.getElementById('show-t').textContent = s.venue;
   document.getElementById('show-s').textContent = fmtL(s.date);
+  document.getElementById('nav-venue').hidden = false;
   $show.scrollTop = 0;
   _showBack = fromHome ? 'home' : 'list';
   if (fromHome) { $home.classList.add('l'); $list.classList.add('r'); }
@@ -603,6 +900,7 @@ document.getElementById('list-back').onclick = () => {
   $home.classList.remove('l');
 };
 document.getElementById('show-back').onclick = () => {
+  closeVenueSheet();
   $show.classList.add('r');
   if (_showBack === 'home') {
     $home.classList.remove('l');
