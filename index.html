@@ -799,6 +799,7 @@ let _sheetShow = null;
 
 function openVenueSheet(show) {
   if (!ALL.length) return;
+  push({ v:'sheet', kind:'venue', key:show.id, showId:show.id, from:_showBack });
   _sheetShow = show;
   const st = venueStats(show);
   const pct = st.top.length ? st.top[0].n : 1;
@@ -855,7 +856,8 @@ function openVenueSheet(show) {
       Grateful Dead show and song statistics. Counts reflect what this archive holds, not a definitive tally.</div>`;
 
   document.getElementById('vs-body').querySelectorAll('.vs-show').forEach(b => {
-    b.onclick = () => { const s = st.v.shows[+b.dataset.i]; closeVenueSheet(); if (s.date !== show.date) navShow(s, _showBack === 'home'); };
+    b.onclick = () => { const s = st.v.shows[+b.dataset.i];
+      if (s.id === show.id) closeVenueSheet(); else jumpFromSheet(s); };
   });
 
   $sheet.hidden = false;
@@ -868,6 +870,7 @@ function openVenueSheet(show) {
 function openSongSheet(id, fromShow) {
   const st = songStats(id, fromShow.date);
   if (!st) return;
+  push({ v:'sheet', kind:'song', key:id, showId:fromShow.id, from:_showBack });
   const ix = venueIndex();
   const byDate = new Map(ix.chron.map(s => [s.date, s]));
 
@@ -932,8 +935,7 @@ function openSongSheet(id, fromShow) {
   document.getElementById('vs-body').querySelectorAll('.vs-date').forEach(b => {
     b.onclick = () => {
       const s = byDate.get(b.dataset.d);
-      closeVenueSheet();
-      if (s && s.date !== fromShow.date) navShow(s, _showBack === 'home');
+      if (!s || s.id === fromShow.id) closeVenueSheet(); else jumpFromSheet(s);
     };
   });
 
@@ -942,11 +944,22 @@ function openSongSheet(id, fromShow) {
   requestAnimationFrame(() => { $sheet.classList.add('on'); $sheetBd.classList.add('on'); });
 }
 
-function closeVenueSheet() {
+// Just move the panel — used when history is already where it should be.
+function closeSheet() {
   if (!$sheet.classList.contains('on')) return;
   $sheet.classList.remove('on');
   $sheetBd.classList.remove('on');
   setTimeout(() => { if (!$sheet.classList.contains('on')) $sheet.hidden = true; }, 340);
+}
+
+// A user closing the sheet is going back, so route it through history — that
+// way the sheet answers the browser's back button as well as its own X.
+// History is the source of truth here, not the CSS class: if a sheet entry is
+// on the stack it has to come off, even if the panel never finished animating
+// in — otherwise that entry strands and back does nothing visible.
+function closeVenueSheet() {
+  if (history.state && history.state.v === 'sheet') { history.back(); return; }
+  closeSheet();
 }
 
 $sheetBd.onclick = closeVenueSheet;
@@ -1057,7 +1070,7 @@ function renderEras() {
   el.querySelectorAll('.era-row').forEach(r=>{
     r.onclick=()=>{
       const e=ERAS.find(x=>x.id===r.dataset.id);
-      navList(e.name, e.years+' · '+e.shows.length+' shows', e.shows.map(s=>({...s,era:e})));
+      navList('era', e.id);
     };
   });
 }
@@ -1071,7 +1084,7 @@ function renderYears() {
       <span class="yr-c">${YR_MAP[y].length} show${YR_MAP[y].length>1?'s':''}</span>
     </button>`).join('');
   el.querySelectorAll('.yr-btn').forEach(b=>{
-    b.onclick=()=>{ const y=b.dataset.y; navList(y, YR_MAP[y].length+' shows', YR_MAP[y]); };
+    b.onclick=()=>navList('year', b.dataset.y);
   });
 }
 
@@ -1256,50 +1269,115 @@ function renderShowDetail(s) {
   };
 }
 
-// ─── NAV ───
+// ─── NAV + HISTORY ───
+// The three views are CSS states on one document, so without history entries
+// the browser's back button leaves the app entirely instead of stepping back
+// through it. Every in-app move pushes an entry, and the on-screen back arrows
+// call history.back() rather than moving the views themselves — so the two can
+// never disagree about where "back" goes.
+//
+// Shows are keyed by id, not date: 21 dates in the archive carry two shows.
 const $home = document.getElementById('home');
 const $list = document.getElementById('list-view');
 const $show = document.getElementById('show-view');
 let _showBack = 'list';
 let _curShow = null;
+let _restoring = false;   // true while replaying a popstate, so we don't re-push
 
-function navList(title, sub, shows) {
-  document.getElementById('list-t').textContent = title;
-  document.getElementById('list-s').textContent = sub;
-  renderShowList(shows);
+const push = state => { if (!_restoring) history.pushState(state, ''); };
+
+function listData(kind, key) {
+  if (kind === 'year') {
+    const shows = YR_MAP[key];
+    return shows ? { title: key, sub: shows.length + ' shows', shows } : null;
+  }
+  const e = ERAS.find(x => x.id === key);
+  return e ? { title: e.name, sub: `${e.years} · ${e.shows.length} shows`,
+               shows: ALL.filter(s => s.era.id === e.id) } : null;
+}
+
+// ── apply*: move the views. These never touch history. ──
+function applyHome() {
+  closeSheet();
+  $show.classList.add('r'); $show.classList.remove('l');
+  $list.classList.add('r'); $list.classList.remove('l');
+  $home.classList.remove('l');
+}
+
+function applyList(kind, key) {
+  closeSheet();
+  const d = listData(kind, key);
+  if (!d) return applyHome();
+  document.getElementById('list-t').textContent = d.title;
+  document.getElementById('list-s').textContent = d.sub;
+  renderShowList(d.shows);
   $list.scrollTop = 0;
   $home.classList.add('l');
   $list.classList.remove('r','l');
   $show.classList.add('r'); $show.classList.remove('l');
 }
 
-function navShow(s, fromHome=false) {
+function applyShow(id, from) {
+  closeSheet();
+  const s = ALL.find(x => x.id === id);
+  if (!s) return applyHome();
   _curShow = s;
   renderShowDetail(s);
   document.getElementById('show-t').textContent = s.venue;
   document.getElementById('show-s').textContent = fmtL(s.date);
   document.getElementById('nav-venue').hidden = false;
   $show.scrollTop = 0;
-  _showBack = fromHome ? 'home' : 'list';
-  if (fromHome) { $home.classList.add('l'); $list.classList.add('r'); }
+  _showBack = from;
+  if (from === 'home') { $home.classList.add('l'); $list.classList.add('r'); }
   else { $list.classList.add('l'); $list.classList.remove('r'); }
   $show.classList.remove('r','l');
 }
 
-document.getElementById('list-back').onclick = () => {
-  $list.classList.add('r'); $list.classList.remove('l');
-  $home.classList.remove('l');
-};
-document.getElementById('show-back').onclick = () => {
-  closeVenueSheet();
-  $show.classList.add('r');
-  if (_showBack === 'home') {
-    $home.classList.remove('l');
-    $list.classList.add('r'); $list.classList.remove('l');
-  } else {
-    $list.classList.remove('l','r');
-  }
-};
+// ── nav*: what the app calls. Push, then apply. ──
+function navList(kind, key) {
+  push({ v:'list', kind, key });
+  applyList(kind, key);
+}
+
+function navShow(s, fromHome=false) {
+  const from = fromHome ? 'home' : 'list';
+  push({ v:'show', key:s.id, from });
+  applyShow(s.id, from);
+}
+
+// Jumping to another show from inside a sheet: the sheet's entry is consumed
+// rather than stacked, so back from the new show lands where the sheet was
+// opened from instead of reopening it.
+function jumpFromSheet(s) {
+  closeSheet();
+  const from = _showBack === 'home' ? 'home' : 'list';
+  history.replaceState({ v:'show', key:s.id, from }, '');
+  applyShow(s.id, from);
+}
+
+document.getElementById('list-back').onclick = () => history.back();
+document.getElementById('show-back').onclick = () => history.back();
+
+addEventListener('popstate', e => {
+  const st = e.state || { v:'home' };
+  _restoring = true;
+  try {
+    if (st.v === 'sheet') {
+      const show = ALL.find(x => x.id === st.showId);
+      if (!show) { applyHome(); return; }
+      applyShow(st.showId, st.from || 'home');
+      if (st.kind === 'song') openSongSheet(st.key, show); else openVenueSheet(show);
+    }
+    else if (st.v === 'show') applyShow(st.key, st.from || 'home');
+    else if (st.v === 'list') applyList(st.kind, st.key);
+    else applyHome();
+  } finally { _restoring = false; }
+});
+
+// The document always loads showing home, so anchor the bottom of the stack
+// there — including on a reload from deeper in the app, where the restored
+// entry would otherwise disagree with what's on screen.
+history.replaceState({ v:'home' }, '');
 
 // Tabs
 document.querySelectorAll('.tab').forEach(btn=>{
