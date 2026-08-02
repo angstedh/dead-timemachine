@@ -4,3 +4,6 @@ Tor.txt
 errors.txt
 *.token
 .env
+.segue-cache/
+*.json.bak
+__pycache__/

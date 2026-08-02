@@ -194,6 +194,12 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 .song-row:last-child{border-bottom:none}
 .song-row.tapd{cursor:pointer;transition:background var(--t)}
 .song-row.tapd:active{background:rgba(255,255,255,.045)}
+/* Segued songs read as one continuous passage: no rule between them, and a
+   thread down the number gutter tying the run together. */
+.song-row.sg{border-bottom-color:transparent}
+.song-row.sg .sn{position:relative}
+.song-row.sg .sn::after{content:'';position:absolute;right:-5px;top:calc(50% + 8px);width:1px;height:calc(100% - 4px);background:linear-gradient(180deg,rgba(232,168,32,.55),rgba(232,168,32,.2))}
+.ar{color:var(--amber);font-size:13px;margin-left:7px;vertical-align:1px}
 .sx{font-family:var(--font-ui);font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;flex-shrink:0;min-width:26px;text-align:right}
 .tag{display:inline-block;font-family:var(--font-ui);font-size:9.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;padding:2px 6px;border-radius:3px;margin-left:8px;vertical-align:2px;white-space:nowrap}
 .tag.debut{background:rgba(58,160,140,.16);color:#5cc4ad;border:1px solid rgba(58,160,140,.4)}
@@ -282,6 +288,10 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 .vs-chip{font-size:12.5px;color:#ded4c1;background:var(--sheet-2);border:1px solid var(--hdr-line);border-radius:14px;padding:5px 11px;line-height:1.25}
 .vs-chip b{font-family:var(--font-ui);color:var(--amber);font-weight:500;font-size:11px;margin-left:4px}
 .vs-chip.rare{border-color:rgba(138,98,188,.5);color:#cdbce6}
+
+.vs-tr{display:block;margin-bottom:10px}
+.vs-tr-l{display:block;font-family:var(--font-ui);font-size:10.5px;color:#a1968a;letter-spacing:1.6px;text-transform:uppercase;margin-bottom:6px}
+.vs-chip.seg{border-color:rgba(232,168,32,.45);color:#f0e2c8}
 
 /* SONG SHEET: year histogram + every performance */
 .vs-years{display:flex;align-items:flex-end;gap:2px;height:62px;padding:0 1px;overflow-x:auto}
@@ -508,6 +518,9 @@ const venueKey = s => slug(venueName(s)) + '|' + slug(s.city);
 // The scrape pulls in page furniture alongside the songs — lineup credits
 // ("Bass: Phil Lesh"), site chrome ("Comment on this Show!") and fan comments.
 // Strip the decorations off real titles, then drop everything that isn't one.
+// Segue notation, cross-referenced from jerrygarcia.com — setlists.net has none.
+const SEGUE_RE = /\s*>\s*$/;
+
 const cleanSong = s => s
   .replace(/^E:\s*/i, '')              // encore marker
   .replace(/\s+\d{1,2}:\d{2}$/, '')    // track time copied from a tracklist
@@ -540,6 +553,8 @@ function venueIndex() {
   const label = new Map();       // song → nicest display spelling
   const plays = new Map();       // song → total nights across the archive
   const songDates = new Map();   // song → [date] in chronological order
+  const segOut = new Map();      // song → Map(next song → times it ran into it)
+  const segIn = new Map();       // song → Map(previous song → times it came out of it)
 
   // Chronological spine: lets us measure a gap in *shows*, not just in days.
   const chron = [...ALL].sort((a, b) => a.date.localeCompare(b.date));
@@ -555,6 +570,18 @@ function venueIndex() {
 
     const seen = new Set();
     if (SUSPECT.has(s.date)) continue;   // counted as a show, not as a setlist
+
+    // Transitions, counted per occurrence — a Playin' sandwich that returns
+    // later in the night is two transitions, not one.
+    for (const set of s.sets) for (let i = 0; i < set.songs.length - 1; i++) {
+      const raw = set.songs[i], nxt = set.songs[i + 1];
+      if (!SEGUE_RE.test(raw) || !isRealSong(raw) || !isRealSong(nxt)) continue;
+      const a = cleanSong(raw).toLowerCase(), b = cleanSong(nxt).toLowerCase();
+      let o = segOut.get(a); if (!o) segOut.set(a, o = new Map());
+      o.set(b, (o.get(b) || 0) + 1);
+      let n = segIn.get(b); if (!n) segIn.set(b, n = new Map());
+      n.set(a, (n.get(a) || 0) + 1);
+    }
     for (const set of s.sets) for (const raw of set.songs) {
       if (!isRealSong(raw)) continue;
       const name = cleanSong(raw), id = name.toLowerCase();
@@ -585,7 +612,7 @@ function venueIndex() {
     .forEach(([id], i) => songRank.set(id, i + 1));
 
   _venues = { byKey, ranked, firstSeen, songVenues, label, plays, songDates, songRank,
-              chron, ord, songTotal: songRank.size, total: byKey.size };
+              segOut, segIn, chron, ord, songTotal: songRank.size, total: byKey.size };
   return _venues;
 }
 
@@ -604,8 +631,15 @@ function songStats(id, date) {
   // Gap measured in shows the band played without it, which is how a bust-out is felt.
   const gapShows = prev ? (ix.ord.get(date) - ix.ord.get(prev) - 1) : null;
   const gapDays = prev ? Math.round((Date.parse(date + 'T00:00:00Z') - Date.parse(prev + 'T00:00:00Z')) / 864e5) : null;
+  const top = m => [...(m || new Map()).entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 5)
+    .map(([k, c]) => ({ name: ix.label.get(k) || k, n: c }));
+
   return {
     id, name: ix.label.get(id), dates,
+    runsInto: top(ix.segOut.get(id)), comesFrom: top(ix.segIn.get(id)),
+    segueCount: [...(ix.segOut.get(id) || new Map()).values()].reduce((a, b) => a + b, 0),
     n: dates.length, nth: i + 1,
     rank: ix.songRank.get(id) || null, songTotal: ix.songTotal,
     first: dates[0], last: dates[dates.length - 1],
@@ -845,7 +879,9 @@ function openSongSheet(id, fromShow) {
 
   const gapLine = st.isDebut
     ? `First time anywhere in this archive.`
-    : `Last played ${fmtL(st.prev)} — ${st.gapShows} show${st.gapShows === 1 ? '' : 's'} earlier.`;
+    : st.gapShows === 0
+      ? `Played at the previous show too, ${fmtL(st.prev)}.`
+      : `Last played ${fmtL(st.prev)} — ${st.gapShows} show${st.gapShows === 1 ? '' : 's'} earlier.`;
 
   const years = new Map();
   st.dates.forEach(d => years.set(d.slice(0, 4), (years.get(d.slice(0, 4)) || 0) + 1));
@@ -861,6 +897,14 @@ function openSongSheet(id, fromShow) {
       <div class="vs-cell"><div class="vs-n">${years.size}</div><div class="vs-l">Years</div></div>
     </div>
     <div class="vs-note">Performance ${st.nth} of ${st.n} · ${gapLine}</div>
+
+    ${st.runsInto.length || st.comesFrom.length ? `
+      <div class="vs-sec">Transitions</div>
+      ${st.runsInto.length ? `<div class="vs-tr"><span class="vs-tr-l">Runs into</span>
+        <span class="vs-chips">${st.runsInto.map(x => `<span class="vs-chip seg">${esc(x.name)}<b>×${x.n}</b></span>`).join('')}</span></div>` : ''}
+      ${st.comesFrom.length ? `<div class="vs-tr"><span class="vs-tr-l">Comes out of</span>
+        <span class="vs-chips">${st.comesFrom.map(x => `<span class="vs-chip seg">${esc(x.name)}<b>×${x.n}</b></span>`).join('')}</span></div>` : ''}
+      <div class="vs-note">Segue notation cross-referenced from jerrygarcia.com — setlists.net doesn’t publish it.</div>` : ''}
 
     <div class="vs-sec">Across the years</div>
     <div class="vs-years">
@@ -984,7 +1028,8 @@ function renderSOTD() {
       <div class="sotd-city">${s.city}</div>
       <div class="sotd-era">${s.era.name} · ${s.era.years}</div>
       <div class="sotd-songs">
-        ${top.map(song=>`<span class="sotd-song${isHi(song)?' hi':''}">${song}</span>`).join('')}
+        ${top.map(song=>{const sg=SEGUE_RE.test(song),d=song.replace(SEGUE_RE,'');
+          return `<span class="sotd-song${isHi(d)?' hi':''}">${d}${sg?'<span class="ar">→</span>':''}</span>`;}).join('')}
         ${more>0?`<span class="sotd-more">+${more} more songs</span>`:''}
       </div>
     </div>
@@ -1074,7 +1119,7 @@ function runSearch(q) {
       match = '';
     } else {
       outer: for (const st of s.sets) for (const song of st.songs) {
-        if (song.toLowerCase().includes(q)) { match = song; break outer; }
+        if (song.toLowerCase().includes(q)) { match = song.replace(SEGUE_RE, ''); break outer; }
       }
     }
     if (match !== null) { res.push({s, match}); if (res.length >= 120) break; }
@@ -1103,10 +1148,13 @@ function renderShowDetail(s) {
       const id = real ? cleanSong(song).toLowerCase() : null;
       const st = id ? songStats(id, s.date) : null;
       const tag = songTag(st);
+      // A trailing ">" means this song runs straight into the next one.
+      const segues = SEGUE_RE.test(song) && i < set.songs.length - 1;
+      const disp = song.replace(SEGUE_RE, '');
       return `
-      <div class="song-row${st ? ' tapd' : ''}"${st ? ` data-song="${esc(id)}"` : ''}>
+      <div class="song-row${st ? ' tapd' : ''}${segues ? ' sg' : ''}"${st ? ` data-song="${esc(id)}"` : ''}>
         <span class="sn">${set.enc?'':i+1}</span>
-        <span class="s${isHi(song)?' hi':''}${set.enc?' en':''}">${song}${tag?`<span class="tag ${tag.c}">${tag.t}</span>`:''}</span>
+        <span class="s${isHi(disp)?' hi':''}${set.enc?' en':''}">${disp}${segues?'<span class="ar">→</span>':''}${tag?`<span class="tag ${tag.c}">${tag.t}</span>`:''}</span>
         ${st && !st.segment ? `<span class="sx">${st.n}</span>` : ''}
       </div>`;
     }).join('');
