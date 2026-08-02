@@ -192,6 +192,47 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 
 .song-row{display:flex;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid #1a1a1a}
 .song-row:last-child{border-bottom:none}
+.song-row.tapd{cursor:pointer;transition:background var(--t)}
+.song-row.tapd:active{background:rgba(255,255,255,.045)}
+/* Segued songs read as one continuous passage: no rule between them, and a
+   thread down the number gutter tying the run together. */
+.song-row.sg{border-bottom-color:transparent}
+.song-row.sg .sn{position:relative}
+.song-row.sg .sn::after{content:'';position:absolute;right:-5px;top:calc(50% + 8px);width:1px;height:calc(100% - 4px);background:linear-gradient(180deg,rgba(232,168,32,.55),rgba(232,168,32,.2))}
+.ar{color:var(--amber);font-size:13px;margin-left:7px;vertical-align:1px}
+.sx{font-family:var(--font-ui);font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;flex-shrink:0;min-width:26px;text-align:right}
+.tag{display:inline-block;font-family:var(--font-ui);font-size:9.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;padding:2px 6px;border-radius:3px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.tag.debut{background:rgba(58,160,140,.16);color:#5cc4ad;border:1px solid rgba(58,160,140,.4)}
+.tag.last{background:rgba(194,74,74,.15);color:#e07a7a;border:1px solid rgba(194,74,74,.4)}
+.tag.only{background:rgba(138,98,188,.18);color:#cdbce6;border:1px solid rgba(138,98,188,.45)}
+.tag.bust{background:rgba(232,168,32,.15);color:var(--amber);border:1px solid rgba(232,168,32,.42)}
+
+/* SHOW CONTEXT + LINEUP */
+.sh-ctx{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.sh-ctx span{font-family:var(--font-ui);font-size:11px;color:#d8cdb9;letter-spacing:.9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:4px;padding:3px 8px}
+.band-blk{margin:16px 20px 0;padding:13px 15px;background:var(--panel);border:1px solid var(--border);border-radius:9px}
+.band-lbl{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.band-list{display:flex;flex-wrap:wrap;gap:6px}
+.band-m{font-size:13px;color:#ded4c1;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 10px;line-height:1.3}
+.band-m b{font-family:var(--font-ui);font-weight:400;font-size:10.5px;color:var(--dim);letter-spacing:.5px;margin-left:5px}
+.band-note{font-family:var(--font-ui);font-size:10.5px;color:var(--faint);letter-spacing:.4px;margin-top:9px;line-height:1.5}
+
+/* RECORDINGS */
+.rec-blk{padding:22px 20px 0}
+.set-lbl.rec{color:var(--teal)}
+.rec-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #1a1a1a;text-decoration:none}
+.rec-row:last-of-type{border-bottom:none}
+.rec-k{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:1.2px;padding:3px 6px;border-radius:3px;flex-shrink:0;width:52px;text-align:center;background:rgba(255,255,255,.06);color:var(--dim);border:1px solid var(--border)}
+.rec-k.k-sbd{background:rgba(58,160,140,.16);color:#5cc4ad;border-color:rgba(58,160,140,.42)}
+.rec-k.k-matrix{background:rgba(232,168,32,.15);color:var(--amber);border-color:rgba(232,168,32,.42)}
+.rec-k.k-fm{background:rgba(138,98,188,.16);color:#cdbce6;border-color:rgba(138,98,188,.42)}
+.rec-t{flex:1;min-width:0;font-size:13px;color:var(--cream);line-height:1.35;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.rec-t b{display:block;font-family:var(--font-ui);font-size:10px;font-weight:500;color:var(--gold);letter-spacing:1.2px;text-transform:uppercase;margin-top:2px}
+.rec-m{font-family:var(--font-ui);font-size:11px;color:var(--amber);text-align:right;flex-shrink:0;line-height:1.4}
+.rec-m i{display:block;font-style:normal;color:var(--faint);font-size:10px}
+.rec-all{display:block;text-align:center;font-family:var(--font-ui);font-size:11px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;padding:11px 0 2px}
+.rec-note,.rec-none{font-family:var(--font-ui);font-size:10.5px;color:var(--faint);letter-spacing:.4px;line-height:1.6;margin-top:10px}
+.sus{margin:18px 20px 0;padding:11px 13px;background:rgba(194,74,74,.1);border:1px solid rgba(194,74,74,.34);border-radius:8px;font-family:var(--font-ui);font-size:11.5px;color:#e0a0a0;letter-spacing:.4px;line-height:1.65}
 .sn{font-family:var(--font-ui);font-size:11px;color:var(--faint);width:18px;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums}
 .s{font-size:16px;color:var(--cream);flex:1;line-height:1.35;font-weight:400;letter-spacing:.2px}
 .s.hi{color:var(--amber);font-weight:500}
@@ -247,6 +288,22 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 .vs-chip{font-size:12.5px;color:#ded4c1;background:var(--sheet-2);border:1px solid var(--hdr-line);border-radius:14px;padding:5px 11px;line-height:1.25}
 .vs-chip b{font-family:var(--font-ui);color:var(--amber);font-weight:500;font-size:11px;margin-left:4px}
 .vs-chip.rare{border-color:rgba(138,98,188,.5);color:#cdbce6}
+
+.vs-tr{display:block;margin-bottom:10px}
+.vs-tr-l{display:block;font-family:var(--font-ui);font-size:10.5px;color:#a1968a;letter-spacing:1.6px;text-transform:uppercase;margin-bottom:6px}
+.vs-chip.seg{border-color:rgba(232,168,32,.45);color:#f0e2c8}
+
+/* SONG SHEET: year histogram + every performance */
+.vs-years{display:flex;align-items:flex-end;gap:2px;height:62px;padding:0 1px;overflow-x:auto}
+.vs-yr{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;flex:1;min-width:15px}
+.vs-yr-b{width:100%;background:linear-gradient(180deg,rgba(232,168,32,.75),rgba(232,168,32,.28));border-radius:2px 2px 0 0}
+.vs-yr-l{font-family:var(--font-ui);font-size:9px;color:var(--faint);font-variant-numeric:tabular-nums}
+.vs-dates{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:1px;background:var(--hdr-line);border:1px solid var(--hdr-line);border-radius:9px;overflow:hidden}
+.vs-date{background:var(--sheet-2);border:none;text-align:left;padding:8px 10px;cursor:pointer;display:block;transition:background var(--t)}
+.vs-date:active{background:#3a322a}
+.vs-date.here{background:rgba(232,168,32,.16)}
+.vs-date-d{display:block;font-family:var(--font-display);font-size:12.5px;font-weight:700;color:var(--cream);font-variant-numeric:tabular-nums}
+.vs-date-v{display:block;font-family:var(--font-ui);font-size:10.5px;color:#a1968a;letter-spacing:.3px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 .vs-note{font-family:var(--font-ui);font-size:11.5px;color:var(--dim);letter-spacing:.3px;line-height:1.6;margin-top:8px}
 
@@ -350,7 +407,7 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
   <div class="sheet-grab"></div>
   <div class="sheet-hd">
     <div class="sheet-hd-txt">
-      <div class="sheet-eye">Venue Guide</div>
+      <div class="sheet-eye" id="sheet-eye">Venue Guide</div>
       <div class="sheet-name" id="vs-name"></div>
       <div class="sheet-city" id="vs-city"></div>
     </div>
@@ -461,6 +518,9 @@ const venueKey = s => slug(venueName(s)) + '|' + slug(s.city);
 // The scrape pulls in page furniture alongside the songs — lineup credits
 // ("Bass: Phil Lesh"), site chrome ("Comment on this Show!") and fan comments.
 // Strip the decorations off real titles, then drop everything that isn't one.
+// Segue notation, cross-referenced from jerrygarcia.com — setlists.net has none.
+const SEGUE_RE = /\s*>\s*$/;
+
 const cleanSong = s => s
   .replace(/^E:\s*/i, '')              // encore marker
   .replace(/\s+\d{1,2}:\d{2}$/, '')    // track time copied from a tracklist
@@ -474,6 +534,16 @@ const isRealSong = s => {
 
 const SEGMENTS = new Set(['drums', 'space', 'tuning']);
 
+// One record in the archive is provably not a setlist: 1965-04-01 Menlo College
+// carries "Touch Of Grey" (1982), "Smells Like Teen Spirit" (1991) and the
+// literal strings "Setlist:" and "Set 1" across four sets. Left in the browse
+// lists — the date itself is plausible — but kept out of every statistic, since
+// otherwise it hands a 1965 debut to two decades of later songs.
+const SUSPECT = new Set(['1965-04-01']);
+const suspectNote = date => SUSPECT.has(date)
+  ? 'This entry’s setlist doesn’t match its date — it lists songs written years later. Shown as scraped, but left out of all song and venue statistics.'
+  : null;
+
 let _venues = null;
 function venueIndex() {
   if (_venues) return _venues;
@@ -482,8 +552,16 @@ function venueIndex() {
   const songVenues = new Map();  // song → Set of venue keys
   const label = new Map();       // song → nicest display spelling
   const plays = new Map();       // song → total nights across the archive
+  const songDates = new Map();   // song → [date] in chronological order
+  const segOut = new Map();      // song → Map(next song → times it ran into it)
+  const segIn = new Map();       // song → Map(previous song → times it came out of it)
 
-  for (const s of [...ALL].sort((a, b) => a.date.localeCompare(b.date))) {
+  // Chronological spine: lets us measure a gap in *shows*, not just in days.
+  const chron = [...ALL].sort((a, b) => a.date.localeCompare(b.date));
+  const ord = new Map();
+  chron.forEach((s, i) => { if (!ord.has(s.date)) ord.set(s.date, i); });
+
+  for (const s of chron) {
     const k = venueKey(s);
     let v = byKey.get(k);
     if (!v) byKey.set(k, v = { key: k, name: venueName(s), city: s.city, aka: new Set(), shows: [], songs: new Map() });
@@ -491,6 +569,19 @@ function venueIndex() {
     v.shows.push(s);
 
     const seen = new Set();
+    if (SUSPECT.has(s.date)) continue;   // counted as a show, not as a setlist
+
+    // Transitions, counted per occurrence — a Playin' sandwich that returns
+    // later in the night is two transitions, not one.
+    for (const set of s.sets) for (let i = 0; i < set.songs.length - 1; i++) {
+      const raw = set.songs[i], nxt = set.songs[i + 1];
+      if (!SEGUE_RE.test(raw) || !isRealSong(raw) || !isRealSong(nxt)) continue;
+      const a = cleanSong(raw).toLowerCase(), b = cleanSong(nxt).toLowerCase();
+      let o = segOut.get(a); if (!o) segOut.set(a, o = new Map());
+      o.set(b, (o.get(b) || 0) + 1);
+      let n = segIn.get(b); if (!n) segIn.set(b, n = new Map());
+      n.set(a, (n.get(a) || 0) + 1);
+    }
     for (const set of s.sets) for (const raw of set.songs) {
       if (!isRealSong(raw)) continue;
       const name = cleanSong(raw), id = name.toLowerCase();
@@ -500,6 +591,9 @@ function venueIndex() {
       if (!label.has(id) || (/[a-z] [A-Z]/.test(name) && !/[a-z] [a-z]/.test(name))) label.set(id, name);
       plays.set(id, (plays.get(id) || 0) + 1);
       v.songs.set(id, (v.songs.get(id) || 0) + 1);
+      let sd = songDates.get(id);
+      if (!sd) songDates.set(id, sd = []);
+      sd.push(s.date);
       if (!firstSeen.has(id)) firstSeen.set(id, { date: s.date, key: k });
       let sv = songVenues.get(id);
       if (!sv) songVenues.set(id, sv = new Set());
@@ -509,8 +603,65 @@ function venueIndex() {
 
   const ranked = [...byKey.values()].sort((a, b) => b.shows.length - a.shows.length || a.name.localeCompare(b.name));
   ranked.forEach((v, i) => { v.rank = i + 1; });
-  _venues = { byKey, ranked, firstSeen, songVenues, label, plays, total: byKey.size };
+
+  // Song leaderboard, so a song can report its standing the way a venue does.
+  const songRank = new Map();
+  [...plays.entries()]
+    .filter(([id]) => !SEGMENTS.has(id))
+    .sort((a, b) => b[1] - a[1] || label.get(a[0]).localeCompare(label.get(b[0])))
+    .forEach(([id], i) => songRank.set(id, i + 1));
+
+  _venues = { byKey, ranked, firstSeen, songVenues, label, plays, songDates, songRank,
+              segOut, segIn, chron, ord, songTotal: songRank.size, total: byKey.size };
   return _venues;
+}
+
+// ─── SONG HISTORY ───
+// A performance in context: how often, how long since, and whether this night
+// is the debut, the last time, or a bust-out after a long absence.
+const BUSTOUT_SHOWS = 50;   // shows skipped before a return counts as a bust-out
+
+function songStats(id, date) {
+  const ix = venueIndex();
+  const dates = ix.songDates.get(id);
+  if (!dates) return null;
+  const i = dates.indexOf(date);
+  const prev = i > 0 ? dates[i - 1] : null;
+  const next = i >= 0 && i < dates.length - 1 ? dates[i + 1] : null;
+  // Gap measured in shows the band played without it, which is how a bust-out is felt.
+  const gapShows = prev ? (ix.ord.get(date) - ix.ord.get(prev) - 1) : null;
+  const gapDays = prev ? Math.round((Date.parse(date + 'T00:00:00Z') - Date.parse(prev + 'T00:00:00Z')) / 864e5) : null;
+  const top = m => [...(m || new Map()).entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 5)
+    .map(([k, c]) => ({ name: ix.label.get(k) || k, n: c }));
+
+  return {
+    id, name: ix.label.get(id), dates,
+    runsInto: top(ix.segOut.get(id)), comesFrom: top(ix.segIn.get(id)),
+    segueCount: [...(ix.segOut.get(id) || new Map()).values()].reduce((a, b) => a + b, 0),
+    n: dates.length, nth: i + 1,
+    rank: ix.songRank.get(id) || null, songTotal: ix.songTotal,
+    first: dates[0], last: dates[dates.length - 1],
+    prev, next, gapShows, gapDays,
+    isDebut: i === 0, isLast: i === dates.length - 1,
+    isOnly: dates.length === 1,
+    isBustout: gapShows !== null && gapShows >= BUSTOUT_SHOWS,
+    segment: SEGMENTS.has(id)
+  };
+}
+
+// The short tag that rides alongside a song in the setlist.
+function songTag(st) {
+  if (!st || st.segment) return null;
+  if (st.isOnly) return { t: 'only time played', c: 'only' };
+  if (st.isDebut) return { t: 'debut', c: 'debut' };
+  if (st.isLast) return { t: 'last ever', c: 'last' };
+  if (st.isBustout) {
+    const yrs = st.gapDays / 365.25;
+    return { t: yrs >= 1 ? `back after ${yrs.toFixed(1)} years` : `back after ${st.gapShows} shows`, c: 'bust' };
+  }
+  return null;
 }
 
 // Consecutive nights, e.g. a five-night stand at the Garden.
@@ -562,6 +713,85 @@ function venueStats(show) {
   };
 }
 
+// ─── LINEUP ───
+// Who was on stage. Spans are month-accurate, not day-accurate — the exact
+// joining date is disputed for several members — so the UI says "around".
+// Milestones below are derived from this archive, not asserted from the spans.
+const LINEUP = [
+  { n: 'Jerry Garcia',           r: 'lead guitar, vocals',     s: [['1965-05-01', '1995-07-09']] },
+  { n: 'Bob Weir',               r: 'rhythm guitar, vocals',   s: [['1965-05-01', '1995-07-09']] },
+  { n: 'Phil Lesh',              r: 'bass, vocals',            s: [['1965-06-01', '1995-07-09']] },
+  { n: 'Bill Kreutzmann',        r: 'drums',                   s: [['1965-05-01', '1995-07-09']] },
+  { n: 'Ron "Pigpen" McKernan',  r: 'organ, harp, vocals',     s: [['1965-05-01', '1972-06-30']] },
+  { n: 'Mickey Hart',            r: 'drums',                   s: [['1967-09-01', '1971-02-28'], ['1974-10-01', '1995-07-09']] },
+  { n: 'Tom Constanten',         r: 'keyboards',               s: [['1968-11-01', '1970-01-31']] },
+  { n: 'Keith Godchaux',         r: 'keyboards',               s: [['1971-10-01', '1979-02-28']] },
+  { n: 'Donna Jean Godchaux',    r: 'vocals',                  s: [['1972-03-01', '1979-02-28']] },
+  { n: 'Brent Mydland',          r: 'keyboards, vocals',       s: [['1979-04-01', '1990-07-31']] },
+  { n: 'Vince Welnick',          r: 'keyboards, vocals',       s: [['1990-09-01', '1995-07-09']] },
+  { n: 'Bruce Hornsby',          r: 'piano, accordion',        s: [['1990-09-01', '1992-03-31']] }
+];
+
+const lineupOn = date => LINEUP.filter(m => m.s.some(([a, b]) => date >= a && date <= b));
+
+// First and last night each member actually appears in this archive. Derived,
+// so the app never claims a farewell show it doesn't hold.
+let _milestones = null;
+function milestones() {
+  if (_milestones) return _milestones;
+  const chron = venueIndex().chron;
+  const m = new Map();   // date → [text]
+  for (const mem of LINEUP) {
+    mem.s.forEach(([a, b], si) => {
+      const inSpan = chron.filter(s => s.date >= a && s.date <= b);
+      if (!inSpan.length) return;
+      const first = inSpan[0].date, last = inSpan[inSpan.length - 1].date;
+      const rejoin = si > 0;
+      const leaves = b < '1995-07-09';
+      const push = (d, t) => { if (!m.has(d)) m.set(d, []); if (!m.get(d).includes(t)) m.get(d).push(t); };
+      if (a > '1965-05-01') push(first, `${mem.n}'s ${rejoin ? 'first night back' : 'first night here'}`);
+      if (leaves) push(last, `${mem.n}'s last night here`);
+    });
+  }
+  _milestones = m;
+  return _milestones;
+}
+
+// ─── RUNS AND LEGS ───
+const LEG_GAP = 6;   // days off before a stretch of dates reads as a separate leg
+
+// Night 2 of 3 at the Garden.
+function showRun(show) {
+  const v = venueIndex().byKey.get(venueKey(show));
+  if (!v) return null;
+  const run = nightRuns(v.shows.map(s => s.date)).find(r => r.includes(show.date));
+  if (!run || run.length < 2) return null;
+  return { night: run.indexOf(show.date) + 1, of: run.length, dates: run };
+}
+
+// The surrounding stretch of touring — consecutive dates with no long break.
+let _legs = null;
+function legIndex() {
+  if (_legs) return _legs;
+  const chron = venueIndex().chron;
+  const legs = [];
+  let cur = [chron[0]];
+  for (let i = 1; i < chron.length; i++) {
+    const gap = (Date.parse(chron[i].date + 'T00:00:00Z') - Date.parse(cur[cur.length - 1].date + 'T00:00:00Z')) / 864e5;
+    if (gap <= LEG_GAP) cur.push(chron[i]); else { legs.push(cur); cur = [chron[i]]; }
+  }
+  legs.push(cur);
+  const byDate = new Map();
+  legs.forEach(leg => leg.forEach((s, i) => byDate.set(s.date, { n: i + 1, of: leg.length, leg })));
+  _legs = byDate;
+  return _legs;
+}
+
+function showLeg(show) {
+  const l = legIndex().get(show.date);
+  return l && l.of >= 3 ? l : null;
+}
+
 // ─── SHEET ───
 const $sheet = document.getElementById('venue-sheet');
 const $sheetBd = document.getElementById('sheet-bd');
@@ -573,6 +803,7 @@ function openVenueSheet(show) {
   const st = venueStats(show);
   const pct = st.top.length ? st.top[0].n : 1;
 
+  document.getElementById('sheet-eye').textContent = 'Venue Guide';
   document.getElementById('vs-name').textContent = st.v.name;
   document.getElementById('vs-city').textContent = st.v.city;
 
@@ -632,6 +863,85 @@ function openVenueSheet(show) {
   requestAnimationFrame(() => { $sheet.classList.add('on'); $sheetBd.classList.add('on'); });
 }
 
+// ─── SONG SHEET ───
+// Same shell as the venue guide, pointed at one song's history.
+function openSongSheet(id, fromShow) {
+  const st = songStats(id, fromShow.date);
+  if (!st) return;
+  const ix = venueIndex();
+  const byDate = new Map(ix.chron.map(s => [s.date, s]));
+
+  document.getElementById('sheet-eye').textContent = 'Song History';
+  document.getElementById('vs-name').textContent = st.name;
+  document.getElementById('vs-city').textContent =
+    st.segment ? 'A segment, not a song' :
+    st.n === 1 ? 'Played once' : `Played ${st.n} nights`;
+
+  const gapLine = st.isDebut
+    ? `First time anywhere in this archive.`
+    : st.gapShows === 0
+      ? `Played at the previous show too, ${fmtL(st.prev)}.`
+      : `Last played ${fmtL(st.prev)} — ${st.gapShows} show${st.gapShows === 1 ? '' : 's'} earlier.`;
+
+  const years = new Map();
+  st.dates.forEach(d => years.set(d.slice(0, 4), (years.get(d.slice(0, 4)) || 0) + 1));
+  const peak = Math.max(...years.values());
+
+  document.getElementById('vs-body').innerHTML = `
+    <div class="vs-grid">
+      <div class="vs-cell"><div class="vs-n">${st.n}</div><div class="vs-l">Nights</div></div>
+      ${st.rank ? `<div class="vs-cell"><div class="vs-n"><small>#</small>${st.rank}</div><div class="vs-l">of ${st.songTotal} songs</div></div>` : ''}
+      <div class="vs-cell"><div class="vs-n">${st.nth}</div><div class="vs-l">This one</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.first.slice(0, 4)}</div><div class="vs-l">First</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.last.slice(0, 4)}</div><div class="vs-l">Last</div></div>
+      <div class="vs-cell"><div class="vs-n">${years.size}</div><div class="vs-l">Years</div></div>
+    </div>
+    <div class="vs-note">Performance ${st.nth} of ${st.n} · ${gapLine}</div>
+
+    ${st.runsInto.length || st.comesFrom.length ? `
+      <div class="vs-sec">Transitions</div>
+      ${st.runsInto.length ? `<div class="vs-tr"><span class="vs-tr-l">Runs into</span>
+        <span class="vs-chips">${st.runsInto.map(x => `<span class="vs-chip seg">${esc(x.name)}<b>×${x.n}</b></span>`).join('')}</span></div>` : ''}
+      ${st.comesFrom.length ? `<div class="vs-tr"><span class="vs-tr-l">Comes out of</span>
+        <span class="vs-chips">${st.comesFrom.map(x => `<span class="vs-chip seg">${esc(x.name)}<b>×${x.n}</b></span>`).join('')}</span></div>` : ''}
+      <div class="vs-note">Segue notation cross-referenced from jerrygarcia.com — setlists.net doesn’t publish it.</div>` : ''}
+
+    <div class="vs-sec">Across the years</div>
+    <div class="vs-years">
+      ${[...years.entries()].sort().map(([y, n]) => `
+        <div class="vs-yr" title="${y}: ${n}">
+          <span class="vs-yr-b" style="height:${Math.max(4, Math.round(n / peak * 46))}px"></span>
+          <span class="vs-yr-l">${y.slice(2)}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="vs-sec">Every performance</div>
+    <div class="vs-dates">
+      ${st.dates.map(d => {
+        const sh = byDate.get(d);
+        return `<button class="vs-date${d === fromShow.date ? ' here' : ''}" data-d="${d}">
+          <span class="vs-date-d">${fmtS(d)}</span>
+          <span class="vs-date-v">${esc(sh ? sh.venue : '')}</span>
+        </button>`;
+      }).join('')}
+    </div>
+
+    <div class="vs-src">Counts reflect the ${ALL.length.toLocaleString()} shows in this archive (setlists.net), not a definitive tally.
+      A song repeated inside one night counts once.</div>`;
+
+  document.getElementById('vs-body').querySelectorAll('.vs-date').forEach(b => {
+    b.onclick = () => {
+      const s = byDate.get(b.dataset.d);
+      closeVenueSheet();
+      if (s && s.date !== fromShow.date) navShow(s, _showBack === 'home');
+    };
+  });
+
+  $sheet.hidden = false;
+  document.getElementById('vs-body').scrollTop = 0;
+  requestAnimationFrame(() => { $sheet.classList.add('on'); $sheetBd.classList.add('on'); });
+}
+
 function closeVenueSheet() {
   if (!$sheet.classList.contains('on')) return;
   $sheet.classList.remove('on');
@@ -644,24 +954,55 @@ document.getElementById('sheet-x').onclick = closeVenueSheet;
 addEventListener('keydown', e => { if (e.key === 'Escape') closeVenueSheet(); });
 document.getElementById('nav-venue').onclick = () => { if (_curShow) openVenueSheet(_curShow); };
 
-// ─── ARCHIVE.ORG: find the best recording for a date ───
-async function bestRecording(date) {
+// ─── ARCHIVE.ORG: what recordings exist for a date, and what kind ───
+// Lineage is the tapers' shorthand for how a recording was made, and it's the
+// single biggest predictor of how a show sounds. Archive.org doesn't expose it
+// as a clean field, so it's read off the identifier and title the way a
+// collector reads a folder name.
+function lineage(d) {
+  const t = ((d.identifier || '') + ' ' + (d.title || '')).toLowerCase();
+  if (/matrix|\bmtx\b/.test(t))                  return { k: 'MATRIX', w: 2.2, d: 'Soundboard and audience mixed together' };
+  if (/\bsbd\b|soundboard|\bsdb\b/.test(t))      return { k: 'SBD',    w: 2.5, d: 'Straight off the mixing desk' };
+  if (/\bfm\b|broadcast|\bkpfa\b|\bwnew\b/.test(t)) return { k: 'FM',  w: 2.0, d: 'Off a radio broadcast' };
+  if (/\baud\b|audience/.test(t))                return { k: 'AUD',    w: 1.0, d: 'Taped from the crowd' };
+  return { k: '—', w: 1.2, d: 'Lineage not stated' };
+}
+
+const BETTY = /betty|miller|charlie|bertha|gems|vault/i;
+
+async function recordings(date) {
+  const key = 'rec1:' + date;
+  try { const c = localStorage.getItem(key); if (c) return JSON.parse(c); } catch (e) {}
+
   const q = encodeURIComponent(`collection:GratefulDead AND date:${date}`);
-  const url = `https://archive.org/advancedsearch.php?q=${q}&fl[]=identifier&fl[]=avg_rating&fl[]=num_reviews&fl[]=downloads&rows=100&page=1&output=json`;
-  const r = await fetch(url);
+  const fl = ['identifier', 'title', 'avg_rating', 'num_reviews', 'downloads'].map(f => 'fl[]=' + f).join('&');
+  const r = await fetch(`https://archive.org/advancedsearch.php?q=${q}&${fl}&rows=100&page=1&output=json`);
   if (!r.ok) throw new Error('archive search failed');
   const docs = (await r.json()).response.docs || [];
-  if (!docs.length) return null;
-  const score = d => {
-    let s = 0;
-    if (/sbd|soundboard/i.test(d.identifier)) s += 2.5;
-    if (/miller|charlie|bertha|gems/i.test(d.identifier)) s += .5;
-    s += (parseFloat(d.avg_rating) || 0) * .6;
-    s += Math.log10((parseInt(d.downloads) || 0) + 1) * .35;
-    return s;
-  };
-  docs.sort((a,b) => score(b) - score(a));
-  return { id: docs[0].identifier, count: docs.length };
+
+  const list = docs.map(d => {
+    const ln = lineage(d);
+    const rating = parseFloat(d.avg_rating) || 0;
+    const reviews = parseInt(d.num_reviews) || 0;
+    const downloads = parseInt(d.downloads) || 0;
+    return {
+      id: d.identifier, title: d.title || d.identifier,
+      kind: ln.k, kindNote: ln.d, noted: BETTY.test(d.identifier + ' ' + (d.title || '')),
+      rating, reviews, downloads,
+      // Ranking mirrors how people actually choose: lineage first, then the
+      // crowd's verdict, with downloads as a weak tiebreak.
+      score: ln.w + rating * .6 + Math.log10(downloads + 1) * .35 + (BETTY.test(d.identifier) ? .5 : 0)
+    };
+  }).sort((a, b) => b.score - a.score);
+
+  const out = { list, count: list.length };
+  try { localStorage.setItem(key, JSON.stringify(out)); } catch (e) {}
+  return out;
+}
+
+async function bestRecording(date) {
+  const { list, count } = await recordings(date);
+  return list.length ? { id: list[0].id, count } : null;
 }
 
 // ─── SHOW OF THE DAY ───
@@ -687,7 +1028,8 @@ function renderSOTD() {
       <div class="sotd-city">${s.city}</div>
       <div class="sotd-era">${s.era.name} · ${s.era.years}</div>
       <div class="sotd-songs">
-        ${top.map(song=>`<span class="sotd-song${isHi(song)?' hi':''}">${song}</span>`).join('')}
+        ${top.map(song=>{const sg=SEGUE_RE.test(song),d=song.replace(SEGUE_RE,'');
+          return `<span class="sotd-song${isHi(d)?' hi':''}">${d}${sg?'<span class="ar">→</span>':''}</span>`;}).join('')}
         ${more>0?`<span class="sotd-more">+${more} more songs</span>`:''}
       </div>
     </div>
@@ -747,7 +1089,7 @@ function rowHTML(s, i, match) {
         <div class="sh-venue">${s.venue}</div>
         <div class="sh-city">${s.city}</div>
         ${match?`<div class="sh-match">♪ ${match}</div>`:''}
-        ${s.badge?`<div class="sh-badge">${s.badge}</div>`:''}
+        ${(milestones().get(s.date)||[]).slice(0,1).map(m=>`<div class="sh-badge">${esc(m)}</div>`).join('')}
       </div>
       <div class="sh-chev">›</div>
     </div>`;
@@ -777,7 +1119,7 @@ function runSearch(q) {
       match = '';
     } else {
       outer: for (const st of s.sets) for (const song of st.songs) {
-        if (song.toLowerCase().includes(q)) { match = song; break outer; }
+        if (song.toLowerCase().includes(q)) { match = song.replace(SEGUE_RE, ''); break outer; }
       }
     }
     if (match !== null) { res.push({s, match}); if (res.length >= 120) break; }
@@ -797,14 +1139,32 @@ document.getElementById('srch-in').addEventListener('input', e=>{
 // ─── SHOW DETAIL ───
 function renderShowDetail(s) {
   const nShows = (venueIndex().byKey.get(venueKey(s)) || {shows:[s]}).shows.length;
+  const run = showRun(s), leg = showLeg(s), band = lineupOn(s.date), marks = milestones().get(s.date) || [];
+
+  const flagged = suspectNote(s.date);
   const setHTML = s.sets.map(set=>{
-    const songs = set.songs.map((song,i)=>`
-      <div class="song-row">
+    const songs = set.songs.map((song,i)=>{
+      const real = isRealSong(song) && !flagged;
+      const id = real ? cleanSong(song).toLowerCase() : null;
+      const st = id ? songStats(id, s.date) : null;
+      const tag = songTag(st);
+      // A trailing ">" means this song runs straight into the next one.
+      const segues = SEGUE_RE.test(song) && i < set.songs.length - 1;
+      const disp = song.replace(SEGUE_RE, '');
+      return `
+      <div class="song-row${st ? ' tapd' : ''}${segues ? ' sg' : ''}"${st ? ` data-song="${esc(id)}"` : ''}>
         <span class="sn">${set.enc?'':i+1}</span>
-        <span class="s${isHi(song)?' hi':''}${set.enc?' en':''}">${song}</span>
-      </div>`).join('');
+        <span class="s${isHi(disp)?' hi':''}${set.enc?' en':''}">${disp}${segues?'<span class="ar">→</span>':''}${tag?`<span class="tag ${tag.c}">${tag.t}</span>`:''}</span>
+        ${st && !st.segment ? `<span class="sx">${st.n}</span>` : ''}
+      </div>`;
+    }).join('');
     return `<div class="set-block"><div class="set-lbl${set.enc?' enc':''}">${set.lbl}</div>${songs}</div>`;
   }).join('');
+
+  const ctx = [];
+  if (run) ctx.push(`Night ${run.night} of ${run.of}`);
+  if (leg) ctx.push(`Show ${leg.n} of ${leg.of} on this stretch`);
+  if (leg) ctx.push(`${fmtS(leg.leg[0].date)} → ${fmtS(leg.leg[leg.leg.length-1].date)}`);
 
   document.getElementById('show-content').innerHTML = `
     <div class="show-hero" style="--era-color:${s.era.color}">
@@ -817,15 +1177,23 @@ function renderShowDetail(s) {
         <div class="sh-venue-big">${s.venue}</div>
         <div class="sh-city-big">${s.city}</div>
         <div class="sh-era-lbl">${s.era.name} · ${s.era.years}</div>
-        ${s.badge?`<div class="sh-badge-big">${s.badge}</div>`:''}
+        ${marks.map(m=>`<div class="sh-badge-big">${esc(m)}</div>`).join('')}
+        ${ctx.length?`<div class="sh-ctx">${ctx.map(c=>`<span>${c}</span>`).join('')}</div>`:''}
         <button class="venue-btn" id="venue-btn"><span class="vb-i">◎</span>Venue guide${nShows>1?` · ${nShows} shows here`:''}</button>
       </div>
     </div>
+    ${band.length?`<div class="band-blk">
+      <div class="band-lbl">On stage</div>
+      <div class="band-list">${band.map(m=>`<span class="band-m">${esc(m.n)}<b>${esc(m.r)}</b></span>`).join('')}</div>
+      <div class="band-note">Lineup by date, month-accurate — several joining dates are disputed.</div>
+    </div>`:''}
     <div class="player-blk" id="player-blk">
       <button class="play-btn" id="play-btn"><span class="tri">▶</span><span>Play this show</span></button>
     </div>
     <div class="setlist-wrap">
+      ${flagged?`<div class="sus">${flagged}</div>`:''}
       ${setHTML}
+      <div class="rec-blk" id="rec-blk"></div>
       <div class="sh-footer">
         <div class="sh-ft-src">Source: setlists.net · Show ID #${s.id}</div>
         <div class="sh-ft-btns">
@@ -836,6 +1204,29 @@ function renderShowDetail(s) {
     </div>`;
 
   document.getElementById('venue-btn').onclick = () => openVenueSheet(s);
+  document.querySelectorAll('#show-content .song-row.tapd').forEach(r => {
+    r.onclick = () => openSongSheet(r.dataset.song, s);
+  });
+
+  // Recordings (async — the archive is the one thing here that isn't local)
+  const recBlk = document.getElementById('rec-blk');
+  recordings(s.date).then(({ list, count }) => {
+    if (!recBlk.isConnected) return;   // navigated away
+    if (!count) { recBlk.innerHTML = `<div class="rec-none">No recordings catalogued on Archive.org for this date.</div>`; return; }
+    const top = list.slice(0, 6);
+    recBlk.innerHTML = `
+      <div class="set-lbl rec">Recordings · ${count} on Archive.org</div>
+      ${top.map(r => `
+        <a class="rec-row" href="https://archive.org/details/${encodeURIComponent(r.id)}" target="_blank" rel="noopener">
+          <span class="rec-k k-${r.kind.toLowerCase().replace(/[^a-z]/g, '') || 'x'}" title="${esc(r.kindNote)}">${r.kind}</span>
+          <span class="rec-t">${esc(r.title)}${r.noted ? '<b>noted source</b>' : ''}</span>
+          <span class="rec-m">${r.rating ? `★ ${r.rating.toFixed(1)}` : '—'}<i>${r.downloads.toLocaleString()}</i></span>
+        </a>`).join('')}
+      ${count > top.length ? `<a class="rec-all" href="${archUrl(s.date)}" target="_blank" rel="noopener">All ${count} recordings ↗</a>` : ''}
+      <div class="rec-note">SBD is off the mixing desk, AUD from the crowd, MATRIX the two mixed. Read from the file names, so treat it as a strong hint rather than a guarantee.</div>`;
+  }).catch(() => {
+    if (recBlk.isConnected) recBlk.innerHTML = `<div class="rec-none">Couldn't reach Archive.org for the recording list.</div>`;
+  });
 
   // venue photo (async, graceful fallback to era art)
   venuePhoto(s.venue).then(p=>{
