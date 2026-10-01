@@ -240,6 +240,13 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 .sh-footer{margin:22px 20px 0;padding:14px 16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:10px}
 .sh-ft-src{font-family:var(--font-ui);font-size:11px;color:var(--faint);letter-spacing:.5px;line-height:1.7}
 .sh-ft-btns{display:flex;gap:8px}
+
+.otd-card{margin:14px 20px 24px;padding:14px 16px;background:var(--panel);border:1px solid var(--border);border-radius:8px}
+.otd-lbl{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.otd-text{font-size:13.5px;color:#ded4c1;line-height:1.65}
+.otd-text b{color:var(--amber);font-weight:700}
+.otd-src{font-family:var(--font-ui);font-size:10.5px;color:var(--faint);margin-top:9px;letter-spacing:.3px}
+.otd-src a{color:var(--gold);text-decoration:none}
 .arch-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(201,148,58,.1);border:1px solid rgba(201,148,58,.28);border-radius:6px;padding:10px 12px;text-decoration:none;flex:1;transition:background var(--t)}
 .arch-btn:active{background:rgba(201,148,58,.2)}
 .arch-btn span{font-family:var(--font-ui);font-size:11px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;text-align:center}
@@ -1086,6 +1093,43 @@ async function bestRecording(date) {
   return list.length ? { id: list[0].id, count } : null;
 }
 
+// ─── THIS DAY IN HISTORY (Wikipedia) ───────────────────────────────────
+// Cached by month+day, not the full date — the set of historical events for
+// "May 8" doesn't change depending on which year's show you're looking at,
+// so every show sharing a calendar day reuses one fetch.
+async function onThisDay(date) {
+  const { m, day, y } = pd(date);
+  const key = 'otd:' + z2(m) + '-' + z2(day);
+  let events = null;
+  try {
+    const c = localStorage.getItem(key);
+    if (c === 'x') return null;
+    if (c) events = JSON.parse(c);
+  } catch(e){}
+  if (!events) {
+    try {
+      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${z2(m)}/${z2(day)}`);
+      if (!r.ok) throw 0;
+      const j = await r.json();
+      events = (j.events || [])
+        .filter(e => typeof e.year === 'number' && e.text)
+        .map(e => {
+          const p = e.pages && e.pages[0];
+          return { year: e.year, text: e.text, page: p && p.content_urls && p.content_urls.desktop.page || null };
+        });
+      try { localStorage.setItem(key, JSON.stringify(events)); } catch(e){}
+    } catch(e) {
+      try { localStorage.setItem(key, 'x'); } catch(_){}
+      return null;
+    }
+  }
+  if (!events.length) return null;
+  // The same year as the show is the ideal "what was happening at the time"
+  // fact; failing that, whichever year on record is chronologically closest.
+  return events.find(e => e.year === y)
+    || events.reduce((best, e) => Math.abs(e.year - y) < Math.abs(best.year - y) ? e : best);
+}
+
 // ─── SHOW OF THE DAY ───
 function todayShow() {
   const n = new Date();
@@ -1280,7 +1324,8 @@ function renderShowDetail(s) {
           <a class="arch-btn" href="${slUrl(s.id)}" target="_blank" rel="noopener"><span>setlists.net ↗</span></a>
         </div>
       </div>
-    </div>`;
+    </div>
+    <div id="otd-card"></div>`;
 
   document.getElementById('venue-btn').onclick = () => openVenueSheet(s);
   document.querySelectorAll('#show-content .song-row.tapd').forEach(r => {
@@ -1306,6 +1351,18 @@ function renderShowDetail(s) {
   }).catch(() => {
     if (recBlk.isConnected) recBlk.innerHTML = `<div class="rec-none">Couldn't reach Archive.org for the recording list.</div>`;
   });
+
+  // This day in history (async, omitted entirely if nothing comes back)
+  const otdCard = document.getElementById('otd-card');
+  onThisDay(s.date).then(fact => {
+    if (!otdCard.isConnected || !fact) return;
+    otdCard.innerHTML = `
+      <div class="otd-card">
+        <div class="otd-lbl">This day in history</div>
+        <div class="otd-text"><b>${fact.year}</b> — ${esc(fact.text)}</div>
+        ${fact.page ? `<div class="otd-src"><a href="${fact.page}" target="_blank" rel="noopener">Read more on Wikipedia ↗</a></div>` : ''}
+      </div>`;
+  }).catch(() => {});
 
   // venue photo (async, graceful fallback to era art)
   venuePhoto(s.venue, s.city).then(p=>{
