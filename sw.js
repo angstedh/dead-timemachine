@@ -1,6 +1,6 @@
 // Dead Time Machine service worker
-const VER = 'dtm-v3';
-const CORE = ['./', 'index.html', 'shows-data.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
+const VER = 'dtm-v4';
+const CORE = ['./', 'index.html', 'shows-data.json', 'venues-data.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VER).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
