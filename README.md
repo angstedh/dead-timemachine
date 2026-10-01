@@ -128,3 +128,4 @@ so a stale or missing file never breaks anything.
 - **deadlists.com** — cross-reference for tricky shows
 - **jerrygarcia.com** — cross-reference for segue notation (setlists.net has none)
 - **Wikipedia** — venue history (built/renamed/demolished) and photos, best effort
+- **Wikipedia's "On this day" feed** — the historical fact on each show page, fetched live
