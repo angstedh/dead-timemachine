@@ -138,10 +138,9 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 /* LIST VIEW */
 .show-row{display:flex;align-items:flex-start;padding:0 16px;border-bottom:1px solid var(--border);cursor:pointer;min-height:72px;transition:background var(--t)}
 .show-row:active{background:var(--panel)}
-.dt-col{padding:14px 14px 14px 0;border-right:1px solid var(--subtle);margin-right:14px;flex-shrink:0;text-align:right;width:50px}
-.dt-m{font-family:var(--font-ui);font-size:10px;font-weight:500;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block}
-.dt-d{font-family:var(--font-display);font-size:20px;font-weight:900;color:var(--cream);line-height:1.1;font-variant-numeric:tabular-nums}
-.dt-y{font-family:var(--font-ui);font-size:10px;color:var(--dim);display:block}
+.dt-col{padding:14px 14px 14px 0;border-right:1px solid var(--subtle);margin-right:14px;flex-shrink:0;text-align:right;width:64px}
+.dt-num{font-family:var(--font-display);font-size:16px;font-weight:900;color:var(--cream);line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:.5px;display:block}
+.dt-dow{font-family:var(--font-ui);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px}
 .sh-info{padding:13px 0;flex:1;min-width:0}
 .sh-venue{font-size:15px;color:var(--cream);font-weight:400;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sh-city{font-family:var(--font-ui);font-size:12px;color:var(--teal);margin-top:3px}
@@ -307,6 +306,19 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 
 .vs-note{font-family:var(--font-ui);font-size:11.5px;color:var(--dim);letter-spacing:.3px;line-height:1.6;margin-top:8px}
 
+/* Building history — scrape_venues.py / venues-data.json */
+.vs-facts{display:flex;flex-wrap:wrap;gap:9px 20px;margin-top:14px}
+.vs-fact{font-family:var(--font-ui);font-size:12.5px;color:#ded4c1;letter-spacing:.2px}
+.vs-fact b{display:block;color:var(--gold);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.vs-timeline{font-style:italic}
+.vs-tl-ar{color:var(--gold);font-style:normal}
+.vs-extract{color:#ccc1b3;line-height:1.7}
+.vs-src2{margin-top:14px;font-size:10.5px}
+.vs-gallery{display:flex;gap:8px;overflow-x:auto;margin:14px -2px 0;padding:2px 2px 6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.vs-gallery::-webkit-scrollbar{height:0;display:none}
+.vs-gal-a{flex:0 0 auto;scroll-snap-align:start}
+.vs-gal-img{width:152px;height:102px;object-fit:cover;border-radius:8px;border:1px solid var(--hdr-line);display:block;background:var(--sheet-2)}
+
 .vs-shows{display:flex;flex-direction:column;border:1px solid var(--hdr-line);border-radius:9px;overflow:hidden}
 .vs-show{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sheet-2);border-bottom:1px solid var(--hdr-line);cursor:pointer;text-align:left;border-left:none;border-right:none;border-top:none;width:100%;font:inherit}
 .vs-show:last-child{border-bottom:none}
@@ -418,7 +430,7 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 
 <script>
 // ─── DATA is loaded async from shows-data.json (same ERAS structure the scraper produces) ───
-let ERAS = [], ALL = [], YR_MAP = {};
+let ERAS = [], ALL = [], YR_MAP = {}, VENUES_INFO = {};
 
 const HI = new Set(["Dark Star","Morning Dew","Terrapin Station","St. Stephen",
   "Unbroken Chain","Eyes Of The World","Scarlet Begonias","Estimated Prophet",
@@ -427,11 +439,15 @@ const HI = new Set(["Dark Star","Morning Dew","Terrapin Station","St. Stephen",
   "Fire On The Mountain","Greatest Story Ever Told","Bird Song"]);
 const isHi = s => { for (const h of HI) if (s.includes(h)) return true; return false; };
 
-const MOS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
 const MOL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const pd = d => { const [y,m,day] = d.split('-').map(Number); return {y,m,day}; };
 const fmtL = d => { const {y,m,day} = pd(d); return `${MOL[m-1]} ${day}, ${y}`; };
 const fmtS = d => { const {y,m,day} = pd(d); return `${MOL[m-1].slice(0,3)} ${day}, ${y}`; };
+const z2 = n => String(n).padStart(2,'0');
+// dd/mm/yy — used everywhere a date is a row in a scrolling list, so a long
+// list of shows reads as one consistent numeric column instead of mixed
+// month-name/short/long formats.
+const fmtNum = d => { const {y,m,day} = pd(d); return `${z2(day)}/${z2(m)}/${String(y).slice(-2)}`; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const archUrl = d => `https://archive.org/search?query=collection%3A%22GratefulDead%22+AND+date%3A${d}`;
 const slUrl = id => `https://www.setlists.net/?show_id=${id}`;
@@ -474,7 +490,17 @@ const VENUE_WIKI = {
   "Deer Creek Music Center":"Deer Creek Music Center"
 };
 
-async function venuePhoto(venue) {
+// venue name + city -> its VENUES_INFO record (built by scrape_venues.py),
+// if the archive has one. Defined ahead of venueKey/slug below, but only ever
+// called at runtime after boot() has run, so that's fine.
+const venueInfoFor = (venue, city) => VENUES_INFO[venueKey({venue, city})] || null;
+
+async function venuePhoto(venue, city) {
+  // scrape_venues.py already resolved almost every venue in the archive and
+  // cached a photo for it — try that before ever touching the network.
+  const info = venueInfoFor(venue, city);
+  if (info) return info.photos && info.photos.length ? info.photos[0] : null;
+
   const title = VENUE_WIKI[venue];
   if (!title) return null;
   const key = 'wimg2:' + title;   // v2 key: v1 cached broken URLs
@@ -797,6 +823,45 @@ const $sheet = document.getElementById('venue-sheet');
 const $sheetBd = document.getElementById('sheet-bd');
 let _sheetShow = null;
 
+// ─── BUILDING HISTORY (from scrape_venues.py / venues-data.json) ──────────
+// Best-effort, scraped from Wikipedia: not every venue in the archive has an
+// article, and not every article has a filled-in infobox, so any of this can
+// be missing. Shown only where it's actually known.
+function renderVenueBuilding(info, name) {
+  if (!info) return '';
+  const knowsRenamed = info.currentName && slug(info.currentName) !== slug(name);
+  const facts = [];
+  if (info.yearBuilt) facts.push(`<span class="vs-fact"><b>Built</b>${info.yearBuilt}</span>`);
+  if (info.demolished) {
+    facts.push(`<span class="vs-fact"><b>Demolished</b>${info.yearDemolished || 'yes'}</span>`);
+  } else if (knowsRenamed) {
+    facts.push(`<span class="vs-fact"><b>Known today as</b>${esc(info.currentName)}</span>`);
+  } else if (info.currentName) {
+    facts.push(`<span class="vs-fact"><b>Status</b>Still standing</span>`);
+  }
+
+  const timeline = [...(info.formerNames || [])];
+  if (!info.demolished && knowsRenamed) timeline.push(info.currentName);
+
+  const gallery = (info.photos || []).length > 1 ? `
+    <div class="vs-gallery">
+      ${info.photos.slice(0, 6).map(p => `
+        <a class="vs-gal-a" href="${p.page}" target="_blank" rel="noopener">
+          <img class="vs-gal-img" src="${p.src}" loading="lazy" alt="${esc(name)}">
+        </a>`).join('')}
+    </div>` : '';
+
+  if (!facts.length && !timeline.length && !info.extract && !gallery) return '';
+
+  return `
+    <div class="vs-sec">The building</div>
+    ${facts.length ? `<div class="vs-facts">${facts.join('')}</div>` : ''}
+    ${timeline.length ? `<div class="vs-note vs-timeline">${timeline.map(esc).join(' <span class="vs-tl-ar">→</span> ')}</div>` : ''}
+    ${info.extract ? `<div class="vs-note vs-extract">${esc(info.extract)}</div>` : ''}
+    ${gallery}
+    <div class="vs-note vs-src2">Building history from <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(info.wikiTitle)}" target="_blank" rel="noopener">Wikipedia</a> — best effort, not guaranteed current.</div>`;
+}
+
 function openVenueSheet(show) {
   if (!ALL.length) return;
   push({ v:'sheet', kind:'venue', key:show.id, showId:show.id, from:_showBack });
@@ -818,8 +883,11 @@ function openVenueSheet(show) {
   const chips = (list, cls, suffix) => list.map(s =>
     `<span class="vs-chip${cls}">${esc(s.name)}<b>${suffix(s)}</b></span>`).join('');
 
+  const info = VENUES_INFO[st.v.key] || null;
+
   document.getElementById('vs-body').innerHTML = `
     ${st.v.aka.size ? `<div class="vs-aka">Also played here as ${[...st.v.aka].map(esc).join(' · ')}</div>` : ''}
+    ${renderVenueBuilding(info, st.v.name)}
 
     <div class="vs-grid">
       <div class="vs-cell"><div class="vs-n">${st.dates.length}</div><div class="vs-l">Shows</div></div>
@@ -845,7 +913,7 @@ function openVenueSheet(show) {
     <div class="vs-shows">
       ${st.v.shows.map((s, i) => `
         <button class="vs-show${s.date === show.date ? ' here' : ''}" data-i="${i}">
-          <span class="vs-show-d">${fmtS(s.date)}</span>
+          <span class="vs-show-d">${fmtNum(s.date)}</span>
           <span class="vs-show-m">${s.dow}${s.date === show.date ? ' · you are here' : ''}</span>
           <span class="vs-show-c">›</span>
         </button>`).join('')}
@@ -923,7 +991,7 @@ function openSongSheet(id, fromShow) {
       ${st.dates.map(d => {
         const sh = byDate.get(d);
         return `<button class="vs-date${d === fromShow.date ? ' here' : ''}" data-d="${d}">
-          <span class="vs-date-d">${fmtS(d)}</span>
+          <span class="vs-date-d">${fmtNum(d)}</span>
           <span class="vs-date-v">${esc(sh ? sh.venue : '')}</span>
         </button>`;
       }).join('')}
@@ -1090,13 +1158,11 @@ function renderYears() {
 
 // ─── SHOW ROW MARKUP (shared by lists & search) ───
 function rowHTML(s, i, match) {
-  const {m,day,y} = pd(s.date);
   return `
     <div class="show-row" data-i="${i}">
       <div class="dt-col">
-        <span class="dt-m">${MOS[m-1]}</span>
-        <div class="dt-d">${day}</div>
-        <span class="dt-y">${y}</span>
+        <span class="dt-num">${fmtNum(s.date)}</span>
+        <span class="dt-dow">${s.dow.slice(0,3)}</span>
       </div>
       <div class="sh-info">
         <div class="sh-venue">${s.venue}</div>
@@ -1242,7 +1308,7 @@ function renderShowDetail(s) {
   });
 
   // venue photo (async, graceful fallback to era art)
-  venuePhoto(s.venue).then(p=>{
+  venuePhoto(s.venue, s.city).then(p=>{
     if (!p) return;
     const ph = document.getElementById('hero-photo'), cr = document.getElementById('photo-cred');
     if (!ph) return; // user already navigated away
@@ -1405,6 +1471,12 @@ async function boot() {
     ALL = ERAS.flatMap(e => e.shows.map(s => ({...s, era:e})));
     YR_MAP = {};
     ALL.forEach(s => { const y = s.date.slice(0,4); (YR_MAP[y] = YR_MAP[y]||[]).push(s); });
+    // Venue history/photos — scraped from Wikipedia by scrape_venues.py. Optional:
+    // the app works fine without it, just without the building details.
+    try {
+      const rv = await fetch('venues-data.json');
+      if (rv.ok) VENUES_INFO = await rv.json();
+    } catch(e) {}
     renderSOTD();
     renderEras();
     renderYears();
