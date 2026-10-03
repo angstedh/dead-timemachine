@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a2440">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Every Phish show, 1983 to now. Setlists, jam charts, streams, and a time machine.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Phish Time Machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@400;500;600&family=Righteous&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --black:#0a0c12;--panel:#121621;--card:#161b28;--border:#232a3b;--subtle:#2c3447;
+  --gold:#E8836F;--amber:#F25C54;--cream:#E9ECF2;
+  --dim:#8790a3;--faint:#586079;
+  --teal:#4FA3D9;--purple:#9B7FD6;--crimson:#E0445A;
+  /* header surfaces — deliberately lighter than the body so headers read as paper, not void */
+  --hdr-a:#26345a;--hdr-b:#1a2440;--hdr-c:#121a2e;--hdr-line:#34446c;
+  --nav-bg:rgba(26,36,64,.9);--sheet:#182036;--sheet-2:#1f2942;
+  --font-display:'Cinzel',serif;--font-body:'Barlow',sans-serif;--font-ui:'Barlow Condensed',sans-serif;
+  --font-wm:'Righteous',var(--font-display);
+  --t:.22s cubic-bezier(.4,0,.2,1);
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+}
+
+html{height:100%;background:var(--black)}
+
+body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
+
+/* VIEWS */
+.view{position:fixed;inset:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:var(--black);transition:opacity var(--t),transform var(--t);will-change:transform,opacity;z-index:1}
+.view.r{transform:translateX(100%);opacity:0;pointer-events:none}
+.view.l{transform:translateX(-28%);opacity:0;pointer-events:none}
+
+/* NAV BAR — compact, lit warm so it sits above the black body */
+.nav{position:sticky;top:0;z-index:20;background:var(--nav-bg);backdrop-filter:blur(14px) saturate(1.3);-webkit-backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--hdr-line);padding:var(--safe-t) 14px 0;height:calc(46px + var(--safe-t));display:flex;align-items:center;gap:8px}
+.back{background:none;border:none;color:var(--amber);font-size:24px;cursor:pointer;padding:6px 10px 6px 0;flex-shrink:0;font-family:var(--font-ui);line-height:1}
+.nav-txt{min-width:0;flex:1}
+.nav-t{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.nav-s{font-family:var(--font-ui);font-size:11px;color:#9aa3b8;letter-spacing:1px;line-height:1.2}
+
+/* HOME */
+#home{padding-bottom:calc(72px + var(--safe-b))}
+
+/* HERO — one compact band: the wordmark and a single line of context */
+.hero{padding:calc(12px + var(--safe-t)) 16px 11px;text-align:center;border-bottom:1px solid var(--hdr-line);background:linear-gradient(172deg,var(--hdr-a) 0%,var(--hdr-b) 56%,var(--hdr-c) 100%);position:relative;overflow:hidden}
+.hero-art{position:absolute;inset:0;pointer-events:none;background:
+  radial-gradient(ellipse at 50% 128%,rgba(242,92,84,.20),transparent 62%),
+  radial-gradient(ellipse at 12% 0%,rgba(155,127,214,.14),transparent 55%),
+  radial-gradient(ellipse at 90% 8%,rgba(79,163,217,.12),transparent 52%)}
+.hero>*{position:relative}
+.wordmark{display:block;width:100%;max-width:290px;height:auto;margin:0 auto;filter:drop-shadow(0 2px 5px rgba(0,0,0,.55))}
+.wordmark text{font-family:var(--font-wm)}
+.hero-sub{font-family:var(--font-ui);font-weight:500;font-size:11px;color:#a9b2c6;letter-spacing:2.6px;text-transform:uppercase;margin-top:6px}
+.hero-sub b{color:var(--amber);font-weight:600}
+
+/* SECTION HEADERS */
+.sec{padding:28px 16px 0}
+.sec-eye{font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-eye::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* SHOW OF DAY CARD */
+.sotd{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;position:relative}
+.sotd::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--era-color,var(--gold));z-index:1}
+.sotd:active{background:#1b2131}
+.sotd-in{padding:18px 18px 16px 22px;position:relative}
+.sotd-date{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--cream);font-variant-numeric:tabular-nums}
+.sotd-dow{font-family:var(--font-ui);font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+.sotd-venue{font-size:15px;color:#c3cad8;margin-top:10px;line-height:1.3;font-weight:400}
+.sotd-city{font-family:var(--font-ui);font-size:13px;color:var(--teal);letter-spacing:.5px;margin-top:4px}
+.sotd-era{font-family:var(--font-ui);font-size:11px;color:var(--dim);margin-top:8px;letter-spacing:1px}
+.sotd-songs{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:3px}
+.sotd-song{font-size:14px;color:var(--cream);font-weight:400;line-height:1.5}
+.sotd-song.hi{color:var(--amber);font-weight:500}
+.sotd-more{font-family:var(--font-ui);font-size:11px;color:var(--dim);letter-spacing:1px;margin-top:4px}
+.sotd-ft{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 12px 22px;border-top:1px solid var(--border);background:var(--panel)}
+.sotd-src{font-family:var(--font-ui);font-size:10px;color:var(--faint);letter-spacing:.5px}
+.sotd-listen{font-family:var(--font-ui);font-size:11px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;text-decoration:none}
+.sk{height:220px;display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);font-size:12px;letter-spacing:2px;color:var(--faint);text-transform:uppercase;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+/* RANDOM BUTTON */
+.rand-wrap{padding:16px 16px 0}
+.rand-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(232,131,111,.08);border:1px solid rgba(232,131,111,.35);border-radius:10px;padding:14px;cursor:pointer;transition:background var(--t)}
+.rand-btn:active{background:rgba(232,131,111,.2)}
+.rand-btn .bolt{color:var(--amber);font-size:16px}
+.rand-btn span{font-family:var(--font-ui);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase}
+
+/* TABS */
+.browse{margin-top:6px}
+.tabs{display:flex;gap:0;padding:0 16px;border-bottom:1px solid var(--border);margin-top:14px}
+.tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:var(--font-ui);font-size:13px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;padding:12px 14px;cursor:pointer;transition:color var(--t)}
+.tab.on{color:var(--cream);border-bottom-color:var(--gold)}
+.tp{display:none}
+.tp.on{display:block}
+
+/* SEARCH */
+.srch-wrap{padding:14px 16px 4px}
+.srch-box{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--subtle);border-radius:8px;padding:0 14px}
+.srch-box:focus-within{border-color:var(--gold)}
+.srch-box .mag{color:var(--dim);font-size:15px}
+.srch-in{flex:1;background:none;border:none;outline:none;color:var(--cream);font-family:var(--font-body);font-size:16px;padding:12px 0}
+.srch-in::placeholder{color:var(--faint)}
+.srch-hint{font-family:var(--font-ui);font-size:11px;color:var(--faint);letter-spacing:.5px;padding:10px 18px 0}
+.sh-match{font-family:var(--font-ui);font-size:12px;color:var(--amber);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ERA LIST */
+.era-row{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;border-bottom:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;transition:background var(--t)}
+.era-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--era-color)}
+.era-row::after{content:'';position:absolute;right:-30px;top:50%;width:190px;height:190px;transform:translateY(-50%);border-radius:50%;background:radial-gradient(circle,var(--era-color) 0%,transparent 65%);opacity:.13;pointer-events:none}
+.era-row:active{background:var(--panel)}
+.era-in{position:relative}
+.era-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--cream)}
+.era-yrs{font-family:var(--font-ui);font-size:12px;color:var(--dim);letter-spacing:1px;margin-top:3px}
+.era-r{display:flex;align-items:center;gap:10px;position:relative}
+.era-cnt{font-family:var(--font-ui);font-size:12px;color:var(--dim)}
+.era-chev{color:var(--faint);font-size:20px;font-family:var(--font-ui)}
+
+/* YEAR GRID */
+.yr-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;padding-top:1px}
+.yr-btn{background:var(--panel);border:none;border-bottom:1px solid var(--border);cursor:pointer;padding:13px 6px;text-align:center;transition:background var(--t)}
+.yr-btn:active{background:#1b2131}
+.yr-n{font-family:var(--font-display);font-size:14px;color:var(--cream);display:block;font-weight:700}
+.yr-c{font-family:var(--font-ui);font-size:10px;color:var(--dim);letter-spacing:.5px;display:block;margin-top:2px}
+
+.home-ft{padding:32px 20px 0;text-align:center}
+.home-ft p{font-family:var(--font-ui);font-size:11px;color:var(--faint);letter-spacing:.5px;line-height:1.9}
+.home-ft a{color:var(--gold);text-decoration:none}
+
+/* LIST VIEW */
+.show-row{display:flex;align-items:flex-start;padding:0 16px;border-bottom:1px solid var(--border);cursor:pointer;min-height:72px;transition:background var(--t)}
+.show-row:active{background:var(--panel)}
+.dt-col{padding:14px 8px 14px 0;border-right:1px solid var(--subtle);margin-right:12px;flex-shrink:0;text-align:right;width:70px}
+.dt-num{font-family:var(--font-display);font-size:15px;font-weight:900;color:var(--cream);line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:.75px;display:block;white-space:nowrap}
+.dt-dow{font-family:var(--font-ui);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:3px}
+.sh-info{padding:13px 0;flex:1;min-width:0}
+.sh-venue{font-size:15px;color:var(--cream);font-weight:400;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-city{font-family:var(--font-ui);font-size:12px;color:var(--teal);margin-top:3px}
+.sh-badge{font-family:var(--font-ui);font-size:11px;color:var(--crimson);margin-top:3px;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-chev{font-family:var(--font-ui);font-size:18px;color:var(--subtle);padding:14px 0 14px 8px;align-self:center;flex-shrink:0}
+
+/* SHOW DETAIL */
+.show-hero{padding:15px 18px 16px;border-bottom:1px solid var(--hdr-line);position:relative;background:linear-gradient(172deg,var(--hdr-a) 0%,var(--hdr-b) 52%,var(--hdr-c) 100%);overflow:hidden}
+.show-hero::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--era-color,var(--gold));z-index:2}
+.hero-photo{position:absolute;inset:0;background-size:cover;background-position:center 30%;opacity:0;transition:opacity .6s ease;z-index:0}
+.hero-photo.on{opacity:.5}
+.hero-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,26,46,.2) 0%,rgba(18,26,46,.72) 74%,var(--hdr-c) 100%)}
+.hero-tint{position:absolute;inset:0;z-index:0;opacity:.5;background:radial-gradient(circle at 80% 10%,var(--era-color,var(--gold)) 0%,transparent 52%);mix-blend-mode:overlay}
+.show-hero>.sh-c{position:relative;z-index:1}
+.photo-cred{position:absolute;right:10px;bottom:8px;z-index:3;font-family:var(--font-ui);font-size:10px;letter-spacing:.5px;color:rgba(237,229,213,.55);text-decoration:none;background:rgba(9,9,9,.5);padding:2px 7px;border-radius:4px;opacity:0;transition:opacity .6s ease}
+.photo-cred.on{opacity:1}
+.sh-date{font-family:var(--font-display);font-size:clamp(19px,5.2vw,26px);font-weight:900;color:var(--cream);font-variant-numeric:tabular-nums;line-height:1.15}
+.sh-dow{font-family:var(--font-ui);font-size:12px;color:var(--amber);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.sh-venue-big{font-size:17px;color:var(--cream);margin-top:9px;line-height:1.3;font-weight:400}
+.sh-city-big{font-family:var(--font-ui);font-size:14px;color:#7cc0ee;margin-top:3px;letter-spacing:.5px}
+.sh-era-lbl{font-family:var(--font-ui);font-size:11px;color:#9aa3b8;margin-top:6px;letter-spacing:1.5px;text-transform:uppercase}
+.sh-badge-big{display:inline-block;margin-top:8px;background:rgba(224,68,90,.13);border:1px solid rgba(224,68,90,.35);border-radius:4px;padding:4px 10px;font-family:var(--font-ui);font-size:11px;color:#f08a96;letter-spacing:.5px}
+
+/* venue guide trigger */
+.venue-btn{display:inline-flex;align-items:center;gap:7px;margin-top:11px;background:rgba(255,220,214,.08);border:1px solid rgba(242,92,84,.42);border-radius:20px;padding:7px 14px;cursor:pointer;font-family:var(--font-ui);font-size:12px;font-weight:500;color:#FFB3A8;letter-spacing:1.4px;text-transform:uppercase;transition:background var(--t)}
+.venue-btn:active{background:rgba(242,92,84,.24)}
+.venue-btn .vb-i{font-size:13px;line-height:1}
+.nav-act{background:none;border:none;color:var(--amber);font-size:19px;cursor:pointer;padding:8px 2px 8px 10px;flex-shrink:0;line-height:1}
+
+/* PLAYER */
+.player-blk{margin:18px 20px 0}
+.play-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(232,131,111,.12);border:1px solid rgba(232,131,111,.4);border-radius:10px;padding:15px;cursor:pointer;transition:background var(--t)}
+.play-btn:active{background:rgba(232,131,111,.22)}
+.play-btn .tri{color:var(--amber);font-size:14px}
+.play-btn span{font-family:var(--font-ui);font-size:13px;font-weight:600;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase}
+.play-btn[disabled]{opacity:.55;pointer-events:none}
+.player-frame{margin-top:10px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#000}
+.player-frame iframe{display:block;width:100%;height:340px;border:0}
+.player-meta{font-family:var(--font-ui);font-size:11px;color:var(--dim);letter-spacing:.5px;margin-top:8px;line-height:1.6}
+.player-meta a{color:var(--gold);text-decoration:none}
+.player-err{font-family:var(--font-ui);font-size:12px;color:var(--dim);letter-spacing:.5px;margin-top:10px;line-height:1.6}
+.player-err a{color:var(--gold)}
+
+.setlist-wrap{padding-bottom:calc(80px + var(--safe-b))}
+.set-block{padding:20px 20px 0}
+.set-lbl{font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);padding-bottom:10px;border-bottom:1px solid var(--subtle);margin-bottom:2px}
+.set-lbl.enc{color:var(--purple)}
+
+.song-row{display:flex;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid #1a1f2c}
+.song-row:last-child{border-bottom:none}
+.song-row.tapd{cursor:pointer;transition:background var(--t)}
+.song-row.tapd:active{background:rgba(255,255,255,.045)}
+/* Segued songs read as one continuous passage: no rule between them, and a
+   thread down the number gutter tying the run together. */
+.song-row.sg{border-bottom-color:transparent}
+.song-row.sg .sn{position:relative}
+.song-row.sg .sn::after{content:'';position:absolute;right:-5px;top:calc(50% + 8px);width:1px;height:calc(100% - 4px);background:linear-gradient(180deg,rgba(242,92,84,.55),rgba(242,92,84,.2))}
+.ar{color:var(--amber);font-size:13px;margin-left:7px;vertical-align:1px}
+.sx{font-family:var(--font-ui);font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;flex-shrink:0;min-width:26px;text-align:right}
+.tag{display:inline-block;font-family:var(--font-ui);font-size:9.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;padding:2px 6px;border-radius:3px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+.tag.debut{background:rgba(79,163,217,.16);color:#7cc0ee;border:1px solid rgba(79,163,217,.4)}
+.tag.last{background:rgba(224,68,90,.15);color:#f08a96;border:1px solid rgba(224,68,90,.4)}
+.tag.only{background:rgba(155,127,214,.18);color:#d2c4f0;border:1px solid rgba(155,127,214,.45)}
+.tag.bust{background:rgba(242,92,84,.15);color:var(--amber);border:1px solid rgba(242,92,84,.42)}
+
+/* SHOW CONTEXT + LINEUP */
+.sh-ctx{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.sh-ctx span{font-family:var(--font-ui);font-size:11px;color:#d3d9e6;letter-spacing:.9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:4px;padding:3px 8px}
+.band-blk{margin:16px 20px 0;padding:13px 15px;background:var(--panel);border:1px solid var(--border);border-radius:9px}
+.band-lbl{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.band-list{display:flex;flex-wrap:wrap;gap:6px}
+.band-m{font-size:13px;color:#d6dbe6;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:4px 10px;line-height:1.3}
+.band-m b{font-family:var(--font-ui);font-weight:400;font-size:10.5px;color:var(--dim);letter-spacing:.5px;margin-left:5px}
+.band-note{font-family:var(--font-ui);font-size:10.5px;color:var(--faint);letter-spacing:.4px;margin-top:9px;line-height:1.5}
+
+/* AUDIO (phish.in) */
+.au-now{font-family:var(--font-ui);font-size:12px;color:var(--cream);letter-spacing:.5px;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.au-now b{color:var(--amber);font-weight:600;margin-right:6px}
+.au-el{display:block;width:100%;margin-top:8px}
+.au-list{margin-top:10px;border:1px solid var(--border);border-radius:10px;overflow:hidden;max-height:320px;overflow-y:auto}
+.au-set{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding:8px 12px 6px;background:var(--panel);border-bottom:1px solid var(--border)}
+.au-tr{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;background:var(--card);border:none;border-bottom:1px solid var(--border);color:var(--cream);font:inherit;font-size:14px;text-align:left;cursor:pointer}
+.au-tr:last-child{border-bottom:none}
+.au-tr:active{background:var(--panel)}
+.au-tr.on{background:rgba(242,92,84,.12);color:var(--amber)}
+.au-tr span:first-child{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.au-tr i{font-style:normal;font-family:var(--font-ui);font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+.jc-key{font-family:var(--font-ui);font-size:10.5px;color:var(--faint);letter-spacing:.4px;padding:14px 20px 0}
+.jc-key b{color:var(--amber);font-weight:500}
+.notes{margin:20px 20px 0;padding:12px 14px;background:var(--panel);border:1px solid var(--border);border-radius:8px}
+.notes summary{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);cursor:pointer}
+.notes p{font-size:13px;color:#c4cad6;line-height:1.65;margin-top:8px;white-space:pre-line}
+.empty{padding:26px 22px;text-align:center;font-family:var(--font-ui);font-size:13px;color:var(--dim);letter-spacing:.5px;line-height:1.9}
+.empty code{color:var(--amber);font-size:12px}
+.sus{margin:18px 20px 0;padding:11px 13px;background:rgba(224,68,90,.1);border:1px solid rgba(224,68,90,.34);border-radius:8px;font-family:var(--font-ui);font-size:11.5px;color:#f0a8b2;letter-spacing:.4px;line-height:1.65}
+.sn{font-family:var(--font-ui);font-size:11px;color:var(--faint);width:18px;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums}
+.s{font-size:16px;color:var(--cream);flex:1;line-height:1.35;font-weight:400;letter-spacing:.2px}
+.s.hi{color:var(--amber);font-weight:500}
+.s.en{color:#b3a3e3;font-style:italic}
+
+.sh-footer{margin:22px 20px 0;padding:14px 16px;background:var(--panel);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;gap:10px}
+.sh-ft-src{font-family:var(--font-ui);font-size:11px;color:var(--faint);letter-spacing:.5px;line-height:1.7}
+.sh-ft-btns{display:flex;gap:8px}
+
+.otd-card{margin:14px 20px 24px;padding:14px 16px;background:var(--panel);border:1px solid var(--border);border-radius:8px}
+.otd-lbl{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.otd-text{font-size:13.5px;color:#d6dbe6;line-height:1.65}
+.otd-text b{color:var(--amber);font-weight:700}
+.otd-src{font-family:var(--font-ui);font-size:10.5px;color:var(--faint);margin-top:9px;letter-spacing:.3px}
+.otd-src a{color:var(--gold);text-decoration:none}
+.arch-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(232,131,111,.1);border:1px solid rgba(232,131,111,.28);border-radius:6px;padding:10px 12px;text-decoration:none;flex:1;transition:background var(--t)}
+.arch-btn:active{background:rgba(232,131,111,.2)}
+.arch-btn span{font-family:var(--font-ui);font-size:11px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;text-align:center}
+
+.load-err{padding:60px 30px;text-align:center;font-family:var(--font-ui);font-size:13px;color:var(--dim);letter-spacing:1px;line-height:2}
+.load-err button{background:none;border:1px solid var(--gold);border-radius:6px;color:var(--gold);font-family:var(--font-ui);font-size:12px;letter-spacing:2px;text-transform:uppercase;padding:10px 22px;margin-top:14px;cursor:pointer}
+
+/* ─── VENUE STAT GUIDE (bottom sheet) ─── */
+.sheet-bd{position:fixed;inset:0;z-index:40;background:rgba(4,6,12,.7);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .26s ease}
+.sheet-bd.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;display:flex;flex-direction:column;max-height:min(90vh,760px);
+  background:var(--sheet);border-top:1px solid var(--hdr-line);border-radius:18px 18px 0 0;
+  box-shadow:0 -18px 44px rgba(0,0,0,.6);transform:translateY(102%);
+  transition:transform .32s cubic-bezier(.32,.72,0,1)}
+.sheet.on{transform:none}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+.sheet-grab{width:36px;height:4px;border-radius:2px;background:#45557f;margin:9px auto 0;flex-shrink:0}
+.sheet-hd{display:flex;align-items:flex-start;gap:10px;padding:10px 18px 12px;border-bottom:1px solid var(--hdr-line);flex-shrink:0;
+  background:linear-gradient(180deg,var(--sheet-2),var(--sheet))}
+.sheet-hd-txt{flex:1;min-width:0}
+.sheet-eye{font-family:var(--font-ui);font-size:10px;font-weight:600;letter-spacing:2.6px;text-transform:uppercase;color:var(--amber)}
+.sheet-name{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--cream);line-height:1.22;margin-top:3px}
+.sheet-city{font-family:var(--font-ui);font-size:12px;color:#7cc0ee;letter-spacing:.6px;margin-top:2px}
+.sheet-x{background:rgba(255,255,255,.06);border:1px solid var(--hdr-line);border-radius:50%;width:30px;height:30px;color:#c3cad8;font-size:13px;cursor:pointer;flex-shrink:0;line-height:1}
+.sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 18px calc(22px + var(--safe-b))}
+
+.vs-aka{font-family:var(--font-ui);font-size:11px;color:var(--dim);letter-spacing:.4px;line-height:1.6;margin-top:12px;font-style:italic}
+.vs-sec{font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);margin:22px 0 11px;display:flex;align-items:center;gap:8px}
+.vs-sec::after{content:'';flex:1;height:1px;background:var(--hdr-line)}
+
+.vs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hdr-line);border:1px solid var(--hdr-line);border-radius:9px;overflow:hidden;margin-top:16px}
+.vs-cell{background:var(--sheet-2);padding:11px 8px 10px;text-align:center}
+.vs-n{font-family:var(--font-display);font-size:19px;font-weight:900;color:var(--cream);font-variant-numeric:tabular-nums;line-height:1.1}
+.vs-n small{font-size:11px;font-weight:400;color:var(--dim)}
+.vs-l{font-family:var(--font-ui);font-size:10px;color:#9aa3b8;letter-spacing:1.3px;text-transform:uppercase;margin-top:3px}
+
+.vs-bar{display:flex;align-items:center;gap:9px;padding:6px 0}
+.vs-bar-n{font-family:var(--font-ui);font-size:11px;color:var(--faint);width:15px;flex-shrink:0;text-align:right;font-variant-numeric:tabular-nums}
+.vs-bar-b{flex:1;min-width:0;position:relative;height:24px;display:flex;align-items:center;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.035)}
+.vs-bar-f{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(242,92,84,.42),rgba(242,92,84,.14));border-right:1px solid rgba(242,92,84,.55)}
+.vs-bar-t{position:relative;font-size:13.5px;color:var(--cream);padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vs-bar-c{font-family:var(--font-ui);font-size:11.5px;color:var(--amber);font-variant-numeric:tabular-nums;flex-shrink:0;width:52px;text-align:right;white-space:nowrap}
+
+.vs-chips{display:flex;flex-wrap:wrap;gap:6px}
+.vs-chip{font-size:12.5px;color:#d6dbe6;background:var(--sheet-2);border:1px solid var(--hdr-line);border-radius:14px;padding:5px 11px;line-height:1.25}
+.vs-chip b{font-family:var(--font-ui);color:var(--amber);font-weight:500;font-size:11px;margin-left:4px}
+.vs-chip.rare{border-color:rgba(155,127,214,.5);color:#d2c4f0}
+
+.vs-tr{display:block;margin-bottom:10px}
+.vs-tr-l{display:block;font-family:var(--font-ui);font-size:10.5px;color:#9aa3b8;letter-spacing:1.6px;text-transform:uppercase;margin-bottom:6px}
+.vs-chip.seg{border-color:rgba(242,92,84,.45);color:#f6dcd6}
+
+/* SONG SHEET: year histogram + every performance */
+.vs-years{display:flex;align-items:flex-end;gap:2px;height:62px;padding:0 1px;overflow-x:auto}
+.vs-yr{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;flex:1;min-width:15px}
+.vs-yr-b{width:100%;background:linear-gradient(180deg,rgba(242,92,84,.75),rgba(242,92,84,.28));border-radius:2px 2px 0 0}
+.vs-yr-l{font-family:var(--font-ui);font-size:9px;color:var(--faint);font-variant-numeric:tabular-nums}
+.vs-dates{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:1px;background:var(--hdr-line);border:1px solid var(--hdr-line);border-radius:9px;overflow:hidden}
+.vs-date{background:var(--sheet-2);border:none;text-align:left;padding:8px 10px;cursor:pointer;display:block;transition:background var(--t)}
+.vs-date:active{background:#2a3554}
+.vs-date.here{background:rgba(242,92,84,.16)}
+.vs-date-d{display:block;font-family:var(--font-display);font-size:12.5px;font-weight:700;color:var(--cream);font-variant-numeric:tabular-nums}
+.vs-date-v{display:block;font-family:var(--font-ui);font-size:10.5px;color:#9aa3b8;letter-spacing:.3px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.vs-note{font-family:var(--font-ui);font-size:11.5px;color:var(--dim);letter-spacing:.3px;line-height:1.6;margin-top:8px}
+
+/* Building history — scrape_venues.py / venues-data.json */
+.vs-facts{display:flex;flex-wrap:wrap;gap:9px 20px;margin-top:14px}
+.vs-fact{font-family:var(--font-ui);font-size:12.5px;color:#d6dbe6;letter-spacing:.2px}
+.vs-fact b{display:block;color:var(--gold);font-weight:600;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.vs-timeline{font-style:italic}
+.vs-tl-ar{color:var(--gold);font-style:normal}
+.vs-extract{color:#c4cad6;line-height:1.7}
+.vs-src2{margin-top:14px;font-size:10.5px}
+.vs-gallery{display:flex;gap:8px;overflow-x:auto;margin:14px -2px 0;padding:2px 2px 6px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+.vs-gallery::-webkit-scrollbar{height:0;display:none}
+.vs-gal-a{flex:0 0 auto;scroll-snap-align:start}
+.vs-gal-img{width:152px;height:102px;object-fit:cover;border-radius:8px;border:1px solid var(--hdr-line);display:block;background:var(--sheet-2)}
+
+.vs-shows{display:flex;flex-direction:column;border:1px solid var(--hdr-line);border-radius:9px;overflow:hidden}
+.vs-show{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sheet-2);border-bottom:1px solid var(--hdr-line);cursor:pointer;text-align:left;border-left:none;border-right:none;border-top:none;width:100%;font:inherit}
+.vs-show:last-child{border-bottom:none}
+.vs-show:active{background:#2a3554}
+.vs-show-d{font-family:var(--font-display);font-size:13.5px;font-weight:700;color:var(--cream);font-variant-numeric:tabular-nums;width:104px;flex-shrink:0}
+.vs-show-m{font-family:var(--font-ui);font-size:11.5px;color:#9aa3b8;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.4px}
+.vs-show-c{font-family:var(--font-ui);font-size:16px;color:var(--faint);flex-shrink:0}
+.vs-show.here{background:rgba(242,92,84,.11)}
+.vs-show.here .vs-show-d{color:var(--amber)}
+
+.vs-src{font-family:var(--font-ui);font-size:11px;color:var(--faint);letter-spacing:.4px;line-height:1.75;margin-top:22px;padding-top:14px;border-top:1px solid var(--hdr-line)}
+.vs-src a{color:var(--gold);text-decoration:none}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:var(--subtle);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="view" id="home">
+  <header class="hero">
+    <div class="hero-art"></div>
+    <h1>
+      <svg class="wordmark" viewBox="0 0 300 50" role="img" aria-label="Phish">
+        <defs>
+          <path id="wm-arc" d="M40,42 Q150,10 260,42" fill="none"/>
+          <linearGradient id="wm-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFE3DC"/>
+            <stop offset="46%" stop-color="#F25C54"/>
+            <stop offset="100%" stop-color="#9E1F2C"/>
+          </linearGradient>
+        </defs>
+        <text font-size="34" letter-spacing="4" text-anchor="middle"
+              fill="url(#wm-fill)" stroke="#0b1020" stroke-width="2.6" paint-order="stroke">
+          <textPath href="#wm-arc" startOffset="50%">PHISH</textPath>
+        </text>
+      </svg>
+    </h1>
+    <p class="hero-sub">The Time Machine · <b id="hero-yrs">1983–Now</b></p>
+  </header>
+
+  <div class="sec">
+    <div class="sec-eye">Show of the Day</div>
+    <div class="sotd" id="sotd"><div class="sk">Tuning in…</div></div>
+  </div>
+
+  <div class="rand-wrap">
+    <button class="rand-btn" id="rand-btn"><span class="bolt">⚡</span><span>Take me anywhere</span></button>
+  </div>
+
+  <div class="browse">
+    <div class="sec-eye" style="margin:22px 16px 0;padding:0">Browse</div>
+    <div class="tabs">
+      <button class="tab on" data-tp="eras">By Era</button>
+      <button class="tab" data-tp="years">By Year</button>
+      <button class="tab" data-tp="srch">Search</button>
+    </div>
+    <div class="tp on" id="tp-eras"><div class="era-list" id="era-list"></div></div>
+    <div class="tp" id="tp-years"><div class="yr-grid" id="yr-grid"></div></div>
+    <div class="tp" id="tp-srch">
+      <div class="srch-wrap">
+        <div class="srch-box"><span class="mag">⌕</span><input class="srch-in" id="srch-in" type="search" placeholder="Song, venue, city, tour, or date…" autocomplete="off"></div>
+      </div>
+      <div class="srch-hint" id="srch-hint">Try “Tweezer”, “Hampton”, or “1997”</div>
+      <div class="show-list" id="srch-list"></div>
+    </div>
+  </div>
+
+  <div class="home-ft">
+    <p>Setlists &amp; jam charts from <a href="https://phish.net" target="_blank" rel="noopener">phish.net</a> · Streams from <a href="https://phish.in" target="_blank" rel="noopener">phish.in</a><br><a href="../">Grateful Dead Time Machine →</a></p>
+  </div>
+</div>
+
+<!-- LIST -->
+<div class="view r" id="list-view">
+  <div class="nav">
+    <button class="back" id="list-back" aria-label="Back">‹</button>
+    <div class="nav-txt"><div class="nav-t" id="list-t"></div><div class="nav-s" id="list-s"></div></div>
+  </div>
+  <div class="show-list" id="show-list"></div>
+</div>
+
+<!-- SHOW -->
+<div class="view r" id="show-view">
+  <div class="nav">
+    <button class="back" id="show-back" aria-label="Back">‹</button>
+    <div class="nav-txt"><div class="nav-t" id="show-t"></div><div class="nav-s" id="show-s"></div></div>
+    <button class="nav-act" id="nav-venue" aria-label="Venue guide" hidden>◎</button>
+  </div>
+  <div id="show-content"></div>
+</div>
+
+<!-- VENUE STAT GUIDE -->
+<div class="sheet-bd" id="sheet-bd"></div>
+<section class="sheet" id="venue-sheet" role="dialog" aria-modal="true" aria-labelledby="vs-name" hidden>
+  <div class="sheet-grab"></div>
+  <div class="sheet-hd">
+    <div class="sheet-hd-txt">
+      <div class="sheet-eye" id="sheet-eye">Venue Guide</div>
+      <div class="sheet-name" id="vs-name"></div>
+      <div class="sheet-city" id="vs-city"></div>
+    </div>
+    <button class="sheet-x" id="sheet-x" aria-label="Close">✕</button>
+  </div>
+  <div class="sheet-body" id="vs-body"></div>
+</section>
+
+<script>
+// ─── DATA is loaded async from shows-data.json (same ERAS structure the scraper produces) ───
+let ERAS = [], ALL = [], YR_MAP = {}, VENUES_INFO = {};
+
+// Highlights come from the data, not a hand-kept list: phish.net flags the
+// performances on its jam chart, and those are the ones lit up in a setlist.
+const jcOf = s => s._jc || (s._jc = new Set(s.jc || []));
+
+const MOL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const pd = d => { const [y,m,day] = d.split('-').map(Number); return {y,m,day}; };
+const fmtL = d => { const {y,m,day} = pd(d); return `${MOL[m-1]} ${day}, ${y}`; };
+const fmtS = d => { const {y,m,day} = pd(d); return `${MOL[m-1].slice(0,3)} ${day}, ${y}`; };
+const z2 = n => String(n).padStart(2,'0');
+// dd/mm/yy — used everywhere a date is a row in a scrolling list, so a long
+// list of shows reads as one consistent numeric column instead of mixed
+// month-name/short/long formats.
+const fmtNum = d => { const {y,m,day} = pd(d); return `${z2(day)}/${z2(m)}/${String(y).slice(-2)}`; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pinUrl = d => `https://phish.in/${d}`;
+const pnetUrl = s => s.url || `https://phish.net/setlists/?d=${s.date}`;
+
+// ─── VENUE → WIKIPEDIA article (photo lookup at runtime, cached in localStorage) ───
+const VENUE_WIKI = {
+  "Madison Square Garden":"Madison Square Garden",
+  "Hampton Coliseum":"Hampton Coliseum",
+  "Alpine Valley Music Theatre":"Alpine Valley Music Theatre",
+  "Deer Creek Music Center":"Deer Creek Music Center",
+  "Red Rocks Amphitheatre":"Red Rocks Amphitheatre",
+  "The Gorge":"Gorge Amphitheatre",
+  "The Gorge Amphitheatre":"Gorge Amphitheatre",
+  "Dick's Sporting Goods Park":"Dick's Sporting Goods Park",
+  "Saratoga Performing Arts Center":"Saratoga Performing Arts Center",
+  "Merriweather Post Pavilion":"Merriweather Post Pavilion",
+  "Great Woods Center for the Performing Arts":"Xfinity Center (Mansfield, Massachusetts)",
+  "Shoreline Amphitheatre":"Shoreline Amphitheatre",
+  "Nassau Veterans Memorial Coliseum":"Nassau Veterans Memorial Coliseum",
+  "Worcester Centrum":"DCU Center",
+  "The Centrum":"DCU Center",
+  "Boston Garden":"Boston Garden",
+  "Fox Theatre":"Fox Theatre (Atlanta)",
+  "Bill Graham Civic Auditorium":"Bill Graham Civic Auditorium",
+  "Hollywood Bowl":"Hollywood Bowl",
+  "Fenway Park":"Fenway Park",
+  "Wrigley Field":"Wrigley Field",
+  "Nectar's":"Nectar's",
+  "Higher Ground":"Higher Ground (music venue)"
+};
+
+// venue name + city -> its VENUES_INFO record (built by scrape_venues.py),
+// if the archive has one. Defined ahead of venueKey/slug below, but only ever
+// called at runtime after boot() has run, so that's fine.
+const venueInfoFor = (venue, city) => VENUES_INFO[venueKey({venue, city})] || null;
+
+async function venuePhoto(venue, city) {
+  // scrape_venues.py already resolved almost every venue in the archive and
+  // cached a photo for it — try that before ever touching the network.
+  const info = venueInfoFor(venue, city);
+  if (info) return info.photos && info.photos.length ? info.photos[0] : null;
+
+  const title = VENUE_WIKI[venue];
+  if (!title) return null;
+  const key = 'wimg2:' + title;   // v2 key: v1 cached broken URLs
+  try {
+    const c = localStorage.getItem(key);
+    if (c === 'x') return null;           // negative cache
+    if (c) return JSON.parse(c);
+  } catch(e){}
+  try {
+    const r = await fetch('https://en.wikipedia.org/w/api.php?action=query&prop=pageimages&piprop=thumbnail&pithumbsize=800&format=json&origin=*&redirects=1&titles=' + encodeURIComponent(title));
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    const page = j.query && j.query.pages && Object.values(j.query.pages)[0];
+    const src = page && page.thumbnail && page.thumbnail.source;
+    if (!src) throw 0;
+    const out = { src, page: 'https://en.wikipedia.org/wiki/' + encodeURIComponent(title) };
+    try { localStorage.setItem(key, JSON.stringify(out)); } catch(e){}
+    return out;
+  } catch(e) {
+    try { localStorage.setItem(key, 'x'); } catch(_){}
+    return null;
+  }
+}
+
+// ═══ VENUE STAT GUIDE ═══════════════════════════════════════════════
+// A venue index (dates played, show counts, song-frequency tables), computed
+// from the local archive so it works offline.
+
+// Buildings the band played under more than one name, merged into one venue
+// and noted with the former name. phish.net already normalises most of these.
+const VENUE_RENAME = {};
+
+// Venue identity is name + city: "Fox Theater" is two different buildings
+// (St. Louis and Atlanta), while "Fox Theater"/"Fox Theatre" in St. Louis is one.
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '');
+const venueName = s => VENUE_RENAME[s.venue] || s.venue;
+const venueKey = s => slug(venueName(s)) + '|' + slug(s.city);
+
+// phish.net marks transitions explicitly: ">" a segue, "->" a jam straight
+// into the next song. The scraper keeps that mark on the end of the title.
+const SEGUE_RE = /\s*-?>\s*$/;
+const segMark = song => { const m = song.match(/(-?>)\s*$/); return m ? m[1] : null; };
+const arrow = m => m ? `<span class="ar" title="${m === '->' ? 'jams into' : 'segues into'}">${m === '->' ? '→' : '›'}</span>` : '';
+
+const cleanSong = s => s.replace(SEGUE_RE, '').trim();
+// phish.net's data is clean, unlike a scraped page — anything non-empty is a song.
+const isRealSong = s => cleanSong(s).length > 0;
+
+// Untitled jams get their own setlist line on phish.net; they top no chart.
+const SEGMENTS = new Set(['jam']);
+
+// No known-bad records yet. Kept so a bad scrape can be fenced off the stats
+// without deleting it: add the date here.
+const SUSPECT = new Set();
+const suspectNote = date => SUSPECT.has(date)
+  ? 'This entry’s setlist looks wrong for its date. Shown as scraped, but left out of all song and venue statistics.'
+  : null;
+
+let _venues = null;
+function venueIndex() {
+  if (_venues) return _venues;
+  const byKey = new Map();
+  const firstSeen = new Map();   // song → { date, key } first appearance in the archive
+  const songVenues = new Map();  // song → Set of venue keys
+  const label = new Map();       // song → nicest display spelling
+  const plays = new Map();       // song → total nights across the archive
+  const songDates = new Map();   // song → [date] in chronological order
+  const segOut = new Map();      // song → Map(next song → times it ran into it)
+  const segIn = new Map();       // song → Map(previous song → times it came out of it)
+
+  // Chronological spine: lets us measure a gap in *shows*, not just in days.
+  const chron = [...ALL].sort((a, b) => a.date.localeCompare(b.date));
+  const ord = new Map();
+  chron.forEach((s, i) => { if (!ord.has(s.date)) ord.set(s.date, i); });
+
+  for (const s of chron) {
+    const k = venueKey(s);
+    let v = byKey.get(k);
+    if (!v) byKey.set(k, v = { key: k, name: venueName(s), city: s.city, aka: new Set(), shows: [], songs: new Map() });
+    if (s.venue !== v.name) v.aka.add(s.venue);
+    v.shows.push(s);
+
+    const seen = new Set();
+    if (SUSPECT.has(s.date)) continue;   // counted as a show, not as a setlist
+
+    // Transitions, counted per occurrence — a Playin' sandwich that returns
+    // later in the night is two transitions, not one.
+    for (const set of s.sets) for (let i = 0; i < set.songs.length - 1; i++) {
+      const raw = set.songs[i], nxt = set.songs[i + 1];
+      if (!SEGUE_RE.test(raw) || !isRealSong(raw) || !isRealSong(nxt)) continue;
+      const a = cleanSong(raw).toLowerCase(), b = cleanSong(nxt).toLowerCase();
+      let o = segOut.get(a); if (!o) segOut.set(a, o = new Map());
+      o.set(b, (o.get(b) || 0) + 1);
+      let n = segIn.get(b); if (!n) segIn.set(b, n = new Map());
+      n.set(a, (n.get(a) || 0) + 1);
+    }
+    for (const set of s.sets) for (const raw of set.songs) {
+      if (!isRealSong(raw)) continue;
+      const name = cleanSong(raw), id = name.toLowerCase();
+      if (seen.has(id)) continue;            // count nights played, not reprises
+      seen.add(id);
+      // prefer Title Case spellings over sloppy ones
+      if (!label.has(id) || (/[a-z] [A-Z]/.test(name) && !/[a-z] [a-z]/.test(name))) label.set(id, name);
+      plays.set(id, (plays.get(id) || 0) + 1);
+      v.songs.set(id, (v.songs.get(id) || 0) + 1);
+      let sd = songDates.get(id);
+      if (!sd) songDates.set(id, sd = []);
+      sd.push(s.date);
+      if (!firstSeen.has(id)) firstSeen.set(id, { date: s.date, key: k });
+      let sv = songVenues.get(id);
+      if (!sv) songVenues.set(id, sv = new Set());
+      sv.add(k);
+    }
+  }
+
+  const ranked = [...byKey.values()].sort((a, b) => b.shows.length - a.shows.length || a.name.localeCompare(b.name));
+  ranked.forEach((v, i) => { v.rank = i + 1; });
+
+  // Song leaderboard, so a song can report its standing the way a venue does.
+  const songRank = new Map();
+  [...plays.entries()]
+    .filter(([id]) => !SEGMENTS.has(id))
+    .sort((a, b) => b[1] - a[1] || label.get(a[0]).localeCompare(label.get(b[0])))
+    .forEach(([id], i) => songRank.set(id, i + 1));
+
+  _venues = { byKey, ranked, firstSeen, songVenues, label, plays, songDates, songRank,
+              segOut, segIn, chron, ord, songTotal: songRank.size, total: byKey.size };
+  return _venues;
+}
+
+// ─── SONG HISTORY ───
+// A performance in context: how often, how long since, and whether this night
+// is the debut, the last time, or a bust-out after a long absence.
+// Shows skipped before a return counts as a bust-out. Phish rotates a far
+// deeper catalogue than the Dead did, so the bar sits higher. A judgement
+// call, not an official phish.net threshold — tune to taste.
+const BUSTOUT_SHOWS = 100;
+
+function songStats(id, date) {
+  const ix = venueIndex();
+  const dates = ix.songDates.get(id);
+  if (!dates) return null;
+  const i = dates.indexOf(date);
+  const prev = i > 0 ? dates[i - 1] : null;
+  const next = i >= 0 && i < dates.length - 1 ? dates[i + 1] : null;
+  // Gap measured in shows the band played without it, which is how a bust-out is felt.
+  const gapShows = prev ? (ix.ord.get(date) - ix.ord.get(prev) - 1) : null;
+  const gapDays = prev ? Math.round((Date.parse(date + 'T00:00:00Z') - Date.parse(prev + 'T00:00:00Z')) / 864e5) : null;
+  const top = m => [...(m || new Map()).entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 5)
+    .map(([k, c]) => ({ name: ix.label.get(k) || k, n: c }));
+
+  return {
+    id, name: ix.label.get(id), dates,
+    runsInto: top(ix.segOut.get(id)), comesFrom: top(ix.segIn.get(id)),
+    segueCount: [...(ix.segOut.get(id) || new Map()).values()].reduce((a, b) => a + b, 0),
+    n: dates.length, nth: i + 1,
+    rank: ix.songRank.get(id) || null, songTotal: ix.songTotal,
+    first: dates[0], last: dates[dates.length - 1],
+    prev, next, gapShows, gapDays,
+    isDebut: i === 0, isLast: i === dates.length - 1,
+    isOnly: dates.length === 1,
+    isBustout: gapShows !== null && gapShows >= BUSTOUT_SHOWS,
+    segment: SEGMENTS.has(id)
+  };
+}
+
+// The short tag that rides alongside a song in the setlist.
+function songTag(st) {
+  if (!st || st.segment) return null;
+  if (st.isOnly) return { t: 'only time played', c: 'only' };
+  if (st.isDebut) return { t: 'debut', c: 'debut' };
+  if (st.isLast) return { t: 'last ever', c: 'last' };
+  if (st.isBustout) {
+    const yrs = st.gapDays / 365.25;
+    return { t: yrs >= 1 ? `back after ${yrs.toFixed(1)} years` : `back after ${st.gapShows} shows`, c: 'bust' };
+  }
+  return null;
+}
+
+// Consecutive nights, e.g. a five-night stand at the Garden.
+function nightRuns(dates) {
+  const out = [];
+  let run = [dates[0]];
+  for (let i = 1; i < dates.length; i++) {
+    const gap = (Date.parse(dates[i] + 'T00:00:00Z') - Date.parse(run[run.length - 1] + 'T00:00:00Z')) / 864e5;
+    if (gap === 1) run.push(dates[i]); else { out.push(run); run = [dates[i]]; }
+  }
+  out.push(run);
+  return out;
+}
+
+function venueStats(show) {
+  const ix = venueIndex();
+  const v = ix.byKey.get(venueKey(show));
+  const dates = v.shows.map(s => s.date);
+  const runs = nightRuns(dates);
+  const years = new Set(dates.map(d => d.slice(0, 4)));
+
+  // Structural segments top the chart at literally every venue, which tells you
+  // nothing about the room. Counted in the song total, left out of the table.
+  const top = [...v.songs.entries()]
+    .filter(([id]) => !SEGMENTS.has(id))
+    .sort((a, b) => b[1] - a[1] || ix.label.get(a[0]).localeCompare(ix.label.get(b[0])))
+    .slice(0, 8)
+    .map(([id, n]) => ({ name: ix.label.get(id), n }));
+
+  const debuts = [...v.songs.keys()]
+    .filter(id => ix.firstSeen.get(id).key === v.key)
+    .sort((a, b) => ix.plays.get(b) - ix.plays.get(a))
+    .slice(0, 14)
+    .map(id => ({ name: ix.label.get(id), n: ix.plays.get(id), date: ix.firstSeen.get(id).date }));
+
+  const exclusive = [...v.songs.keys()]
+    .filter(id => ix.songVenues.get(id).size === 1)
+    .sort((a, b) => ix.plays.get(b) - ix.plays.get(a))
+    .slice(0, 14)
+    .map(id => ({ name: ix.label.get(id), n: ix.plays.get(id) }));
+
+  return {
+    v, dates, years,
+    rank: v.rank, venueCount: ix.total,
+    longestRun: Math.max(...runs.map(r => r.length)),
+    runCount: runs.length,
+    distinct: v.songs.size,
+    top, debuts, exclusive
+  };
+}
+
+// ─── LINEUP ───
+// Who was on stage. Spans are month-accurate, not day-accurate — the exact
+// joining date is disputed for several members — so the UI says "around".
+// Milestones below are derived from this archive, not asserted from the spans.
+const FIRST_SHOW = '1983-12-02', OPEN_END = '9999-12-31';
+const LINEUP = [
+  { n: 'Trey Anastasio',   r: 'guitar, vocals',            s: [[FIRST_SHOW, OPEN_END]] },
+  { n: 'Mike Gordon',      r: 'bass, vocals',              s: [[FIRST_SHOW, OPEN_END]] },
+  { n: 'Jon Fishman',      r: 'drums, vocals',             s: [[FIRST_SHOW, OPEN_END]] },
+  { n: 'Jeff Holdsworth',  r: 'guitar, vocals',            s: [[FIRST_SHOW, '1986-03-31']] },
+  { n: 'Page McConnell',   r: 'keyboards, vocals',         s: [['1985-05-01', OPEN_END]] }
+];
+
+const lineupOn = date => LINEUP.filter(m => m.s.some(([a, b]) => date >= a && date <= b));
+
+// First and last night each member actually appears in this archive. Derived,
+// so the app never claims a farewell show it doesn't hold.
+let _milestones = null;
+function milestones() {
+  if (_milestones) return _milestones;
+  const chron = venueIndex().chron;
+  const m = new Map();   // date → [text]
+  for (const mem of LINEUP) {
+    mem.s.forEach(([a, b], si) => {
+      const inSpan = chron.filter(s => s.date >= a && s.date <= b);
+      if (!inSpan.length) return;
+      const first = inSpan[0].date, last = inSpan[inSpan.length - 1].date;
+      const rejoin = si > 0;
+      const leaves = b !== OPEN_END;
+      const push = (d, t) => { if (!m.has(d)) m.set(d, []); if (!m.get(d).includes(t)) m.get(d).push(t); };
+      if (a > FIRST_SHOW) push(first, `${mem.n}'s ${rejoin ? 'first night back' : 'first night here'}`);
+      if (leaves) push(last, `${mem.n}'s last night here`);
+    });
+  }
+  _milestones = m;
+  return _milestones;
+}
+
+// ─── RUNS AND LEGS ───
+const LEG_GAP = 6;   // days off before a stretch of dates reads as a separate leg
+
+// Night 2 of 3 at the Garden.
+function showRun(show) {
+  const v = venueIndex().byKey.get(venueKey(show));
+  if (!v) return null;
+  const run = nightRuns(v.shows.map(s => s.date)).find(r => r.includes(show.date));
+  if (!run || run.length < 2) return null;
+  return { night: run.indexOf(show.date) + 1, of: run.length, dates: run };
+}
+
+// The surrounding stretch of touring — consecutive dates with no long break.
+let _legs = null;
+function legIndex() {
+  if (_legs) return _legs;
+  const chron = venueIndex().chron;
+  const legs = [];
+  let cur = [chron[0]];
+  for (let i = 1; i < chron.length; i++) {
+    const gap = (Date.parse(chron[i].date + 'T00:00:00Z') - Date.parse(cur[cur.length - 1].date + 'T00:00:00Z')) / 864e5;
+    if (gap <= LEG_GAP) cur.push(chron[i]); else { legs.push(cur); cur = [chron[i]]; }
+  }
+  legs.push(cur);
+  const byDate = new Map();
+  legs.forEach(leg => leg.forEach((s, i) => byDate.set(s.date, { n: i + 1, of: leg.length, leg })));
+  _legs = byDate;
+  return _legs;
+}
+
+function showLeg(show) {
+  const l = legIndex().get(show.date);
+  return l && l.of >= 3 ? l : null;
+}
+
+// ─── SHEET ───
+const $sheet = document.getElementById('venue-sheet');
+const $sheetBd = document.getElementById('sheet-bd');
+let _sheetShow = null;
+
+// ─── BUILDING HISTORY (from scrape_venues.py / venues-data.json) ──────────
+// Best-effort, scraped from Wikipedia: not every venue in the archive has an
+// article, and not every article has a filled-in infobox, so any of this can
+// be missing. Shown only where it's actually known.
+function renderVenueBuilding(info, name) {
+  if (!info) return '';
+  const knowsRenamed = info.currentName && slug(info.currentName) !== slug(name);
+  const facts = [];
+  if (info.yearBuilt) facts.push(`<span class="vs-fact"><b>Built</b>${info.yearBuilt}</span>`);
+  if (info.demolished) {
+    facts.push(`<span class="vs-fact"><b>Demolished</b>${info.yearDemolished || 'yes'}</span>`);
+  } else if (knowsRenamed) {
+    facts.push(`<span class="vs-fact"><b>Known today as</b>${esc(info.currentName)}</span>`);
+  } else if (info.currentName) {
+    facts.push(`<span class="vs-fact"><b>Status</b>Still standing</span>`);
+  }
+
+  const timeline = [...(info.formerNames || [])];
+  if (!info.demolished && knowsRenamed) timeline.push(info.currentName);
+
+  const gallery = (info.photos || []).length > 1 ? `
+    <div class="vs-gallery">
+      ${info.photos.slice(0, 6).map(p => `
+        <a class="vs-gal-a" href="${p.page}" target="_blank" rel="noopener">
+          <img class="vs-gal-img" src="${p.src}" loading="lazy" alt="${esc(name)}">
+        </a>`).join('')}
+    </div>` : '';
+
+  if (!facts.length && !timeline.length && !info.extract && !gallery) return '';
+
+  return `
+    <div class="vs-sec">The building</div>
+    ${facts.length ? `<div class="vs-facts">${facts.join('')}</div>` : ''}
+    ${timeline.length ? `<div class="vs-note vs-timeline">${timeline.map(esc).join(' <span class="vs-tl-ar">→</span> ')}</div>` : ''}
+    ${info.extract ? `<div class="vs-note vs-extract">${esc(info.extract)}</div>` : ''}
+    ${gallery}
+    <div class="vs-note vs-src2">Building history from <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(info.wikiTitle)}" target="_blank" rel="noopener">Wikipedia</a> — best effort, not guaranteed current.</div>`;
+}
+
+function openVenueSheet(show) {
+  if (!ALL.length) return;
+  push({ v:'sheet', kind:'venue', key:show.id, showId:show.id, from:_showBack });
+  _sheetShow = show;
+  const st = venueStats(show);
+  const pct = st.top.length ? st.top[0].n : 1;
+
+  document.getElementById('sheet-eye').textContent = 'Venue Guide';
+  document.getElementById('vs-name').textContent = st.v.name;
+  document.getElementById('vs-city').textContent = st.v.city;
+
+  const bars = st.top.map((s, i) => `
+    <div class="vs-bar">
+      <span class="vs-bar-n">${i + 1}</span>
+      <span class="vs-bar-b"><span class="vs-bar-f" style="width:${Math.round(s.n / pct * 100)}%"></span><span class="vs-bar-t">${esc(s.name)}</span></span>
+      <span class="vs-bar-c">${s.n}&nbsp;night${s.n > 1 ? 's' : ''}</span>
+    </div>`).join('');
+
+  const chips = (list, cls, suffix) => list.map(s =>
+    `<span class="vs-chip${cls}">${esc(s.name)}<b>${suffix(s)}</b></span>`).join('');
+
+  const info = VENUES_INFO[st.v.key] || null;
+
+  document.getElementById('vs-body').innerHTML = `
+    ${st.v.aka.size ? `<div class="vs-aka">Also played here as ${[...st.v.aka].map(esc).join(' · ')}</div>` : ''}
+    ${renderVenueBuilding(info, st.v.name)}
+
+    <div class="vs-grid">
+      <div class="vs-cell"><div class="vs-n">${st.dates.length}</div><div class="vs-l">Shows</div></div>
+      <div class="vs-cell"><div class="vs-n"><small>#</small>${st.rank}</div><div class="vs-l">of ${st.venueCount} venues</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.years.size}</div><div class="vs-l">Years</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.dates[0].slice(0, 4)}</div><div class="vs-l">First</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.dates[st.dates.length - 1].slice(0, 4)}</div><div class="vs-l">Last</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.longestRun}</div><div class="vs-l">Longest run</div></div>
+    </div>
+    <div class="vs-note">${st.dates.length === 1 ? 'A one-night stop' : `${st.dates.length} nights across ${st.runCount} visit${st.runCount > 1 ? 's' : ''}`} · ${fmtL(st.dates[0])} → ${fmtL(st.dates[st.dates.length - 1])} · ${st.distinct} different songs</div>
+
+    ${st.top.length ? `<div class="vs-sec">Most played here</div>${bars}` : ''}
+
+    ${st.debuts.length ? `<div class="vs-sec">First turned up here</div>
+      <div class="vs-chips">${chips(st.debuts, '', s => s.date.slice(0, 4))}</div>
+      <div class="vs-note">Earliest appearance anywhere in this archive.</div>` : ''}
+
+    ${st.exclusive.length ? `<div class="vs-sec">Played nowhere else</div>
+      <div class="vs-chips">${chips(st.exclusive, ' rare', s => '×' + s.n)}</div>` : ''}
+
+    <div class="vs-sec">Every night here</div>
+    <div class="vs-shows">
+      ${st.v.shows.map((s, i) => `
+        <button class="vs-show${s.date === show.date ? ' here' : ''}" data-i="${i}">
+          <span class="vs-show-d">${fmtNum(s.date)}</span>
+          <span class="vs-show-m">${s.dow}${s.date === show.date ? ' · you are here' : ''}</span>
+          <span class="vs-show-c">›</span>
+        </button>`).join('')}
+    </div>
+
+    <div class="vs-src">Compiled from the ${ALL.length.toLocaleString()} shows in this archive (from
+      <a href="https://phish.net" target="_blank" rel="noopener">phish.net</a>), computed on your phone so it works offline.
+      Counts reflect what this archive holds — phish.net's own venue pages are the canonical tally.</div>`;
+
+  document.getElementById('vs-body').querySelectorAll('.vs-show').forEach(b => {
+    b.onclick = () => { const s = st.v.shows[+b.dataset.i];
+      if (s.id === show.id) closeVenueSheet(); else jumpFromSheet(s); };
+  });
+
+  $sheet.hidden = false;
+  document.getElementById('vs-body').scrollTop = 0;
+  requestAnimationFrame(() => { $sheet.classList.add('on'); $sheetBd.classList.add('on'); });
+}
+
+// ─── SONG SHEET ───
+// Same shell as the venue guide, pointed at one song's history.
+function openSongSheet(id, fromShow) {
+  const st = songStats(id, fromShow.date);
+  if (!st) return;
+  push({ v:'sheet', kind:'song', key:id, showId:fromShow.id, from:_showBack });
+  const ix = venueIndex();
+  const byDate = new Map(ix.chron.map(s => [s.date, s]));
+
+  document.getElementById('sheet-eye').textContent = 'Song History';
+  document.getElementById('vs-name').textContent = st.name;
+  document.getElementById('vs-city').textContent =
+    st.segment ? 'A segment, not a song' :
+    st.n === 1 ? 'Played once' : `Played ${st.n} nights`;
+
+  const gapLine = st.isDebut
+    ? `First time anywhere in this archive.`
+    : st.gapShows === 0
+      ? `Played at the previous show too, ${fmtL(st.prev)}.`
+      : `Last played ${fmtL(st.prev)} — ${st.gapShows} show${st.gapShows === 1 ? '' : 's'} earlier.`;
+
+  const years = new Map();
+  st.dates.forEach(d => years.set(d.slice(0, 4), (years.get(d.slice(0, 4)) || 0) + 1));
+  const peak = Math.max(...years.values());
+
+  document.getElementById('vs-body').innerHTML = `
+    <div class="vs-grid">
+      <div class="vs-cell"><div class="vs-n">${st.n}</div><div class="vs-l">Nights</div></div>
+      ${st.rank ? `<div class="vs-cell"><div class="vs-n"><small>#</small>${st.rank}</div><div class="vs-l">of ${st.songTotal} songs</div></div>` : ''}
+      <div class="vs-cell"><div class="vs-n">${st.nth}</div><div class="vs-l">This one</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.first.slice(0, 4)}</div><div class="vs-l">First</div></div>
+      <div class="vs-cell"><div class="vs-n">${st.last.slice(0, 4)}</div><div class="vs-l">Last</div></div>
+      <div class="vs-cell"><div class="vs-n">${years.size}</div><div class="vs-l">Years</div></div>
+    </div>
+    <div class="vs-note">Performance ${st.nth} of ${st.n} · ${gapLine}</div>
+
+    ${st.runsInto.length || st.comesFrom.length ? `
+      <div class="vs-sec">Transitions</div>
+      ${st.runsInto.length ? `<div class="vs-tr"><span class="vs-tr-l">Runs into</span>
+        <span class="vs-chips">${st.runsInto.map(x => `<span class="vs-chip seg">${esc(x.name)}<b>×${x.n}</b></span>`).join('')}</span></div>` : ''}
+      ${st.comesFrom.length ? `<div class="vs-tr"><span class="vs-tr-l">Comes out of</span>
+        <span class="vs-chips">${st.comesFrom.map(x => `<span class="vs-chip seg">${esc(x.name)}<b>×${x.n}</b></span>`).join('')}</span></div>` : ''}
+      <div class="vs-note">From phish.net’s transition marks: › a segue, → a jam straight into the next song.</div>` : ''}
+
+    <div class="vs-sec">Across the years</div>
+    <div class="vs-years">
+      ${[...years.entries()].sort().map(([y, n]) => `
+        <div class="vs-yr" title="${y}: ${n}">
+          <span class="vs-yr-b" style="height:${Math.max(4, Math.round(n / peak * 46))}px"></span>
+          <span class="vs-yr-l">${y.slice(2)}</span>
+        </div>`).join('')}
+    </div>
+
+    <div class="vs-sec">Every performance</div>
+    <div class="vs-dates">
+      ${st.dates.map(d => {
+        const sh = byDate.get(d);
+        return `<button class="vs-date${d === fromShow.date ? ' here' : ''}" data-d="${d}">
+          <span class="vs-date-d">${fmtNum(d)}</span>
+          <span class="vs-date-v">${esc(sh ? sh.venue : '')}</span>
+        </button>`;
+      }).join('')}
+    </div>
+
+    <div class="vs-src">Counts reflect the ${ALL.length.toLocaleString()} shows in this archive (phish.net), not a definitive tally.
+      A song repeated inside one night counts once.</div>`;
+
+  document.getElementById('vs-body').querySelectorAll('.vs-date').forEach(b => {
+    b.onclick = () => {
+      const s = byDate.get(b.dataset.d);
+      if (!s || s.id === fromShow.id) closeVenueSheet(); else jumpFromSheet(s);
+    };
+  });
+
+  $sheet.hidden = false;
+  document.getElementById('vs-body').scrollTop = 0;
+  requestAnimationFrame(() => { $sheet.classList.add('on'); $sheetBd.classList.add('on'); });
+}
+
+// Just move the panel — used when history is already where it should be.
+function closeSheet() {
+  if (!$sheet.classList.contains('on')) return;
+  $sheet.classList.remove('on');
+  $sheetBd.classList.remove('on');
+  setTimeout(() => { if (!$sheet.classList.contains('on')) $sheet.hidden = true; }, 340);
+}
+
+// A user closing the sheet is going back, so route it through history — that
+// way the sheet answers the browser's back button as well as its own X.
+// History is the source of truth here, not the CSS class: if a sheet entry is
+// on the stack it has to come off, even if the panel never finished animating
+// in — otherwise that entry strands and back does nothing visible.
+function closeVenueSheet() {
+  if (history.state && history.state.v === 'sheet') { history.back(); return; }
+  closeSheet();
+}
+
+$sheetBd.onclick = closeVenueSheet;
+document.getElementById('sheet-x').onclick = closeVenueSheet;
+addEventListener('keydown', e => { if (e.key === 'Escape') closeVenueSheet(); });
+document.getElementById('nav-venue').onclick = () => { if (_curShow) openVenueSheet(_curShow); };
+
+// ─── PHISH.IN: the show's audio, track by track ───
+// phish.in hosts audience and soundboard sources for nearly every show, one
+// MP3 per song. Asked for at the moment you hit play rather than scraped, so
+// the archive never pins a stale source. Cached per date for the session.
+const _audio = new Map();
+async function showAudio(date) {
+  if (_audio.has(date)) return _audio.get(date);
+  const r = await fetch(`https://phish.in/api/v2/shows/${date}`);
+  if (!r.ok) throw new Error('phish.in ' + r.status);
+  const j = await r.json();
+  const show = j.show || j.data || j;
+  const tracks = (show.tracks || [])
+    .map(t => ({
+      title: t.title || '', set: t.set_name || t.set || '',
+      src: t.mp3_url || t.mp3 || null,
+      // v2 reports milliseconds; be forgiving if it ever comes back in seconds.
+      secs: t.duration > 36000 ? Math.round(t.duration / 1000) : (t.duration || 0)
+    }))
+    .filter(t => t.src);
+  const out = { tracks, notes: show.taper_notes || '' };
+  _audio.set(date, out);
+  return out;
+}
+const mmss = n => n ? `${Math.floor(n / 60)}:${z2(n % 60)}` : '';
+
+// ─── THIS DAY IN HISTORY (Wikipedia) ───────────────────────────────────
+// Cached by month+day, not the full date — the set of historical events for
+// "May 8" doesn't change depending on which year's show you're looking at,
+// so every show sharing a calendar day reuses one fetch.
+async function onThisDay(date) {
+  const { m, day, y } = pd(date);
+  const key = 'otd:' + z2(m) + '-' + z2(day);
+  let events = null;
+  try {
+    const c = localStorage.getItem(key);
+    if (c === 'x') return null;
+    if (c) events = JSON.parse(c);
+  } catch(e){}
+  if (!events) {
+    try {
+      const r = await fetch(`https://en.wikipedia.org/api/rest_v1/feed/onthisday/events/${z2(m)}/${z2(day)}`);
+      if (!r.ok) throw 0;
+      const j = await r.json();
+      events = (j.events || [])
+        .filter(e => typeof e.year === 'number' && e.text)
+        .map(e => {
+          const p = e.pages && e.pages[0];
+          return { year: e.year, text: e.text, page: p && p.content_urls && p.content_urls.desktop.page || null };
+        });
+      try { localStorage.setItem(key, JSON.stringify(events)); } catch(e){}
+    } catch(e) {
+      try { localStorage.setItem(key, 'x'); } catch(_){}
+      return null;
+    }
+  }
+  if (!events.length) return null;
+  // The same year as the show is the ideal "what was happening at the time"
+  // fact; failing that, whichever year on record is chronologically closest.
+  return events.find(e => e.year === y)
+    || events.reduce((best, e) => Math.abs(e.year - y) < Math.abs(best.year - y) ? e : best);
+}
+
+// ─── SHOW OF THE DAY ───
+function todayShow() {
+  const n = new Date();
+  const seed = n.getFullYear()*1000 + Math.floor((n - new Date(n.getFullYear(),0,0))/86400000);
+  return ALL[seed % ALL.length];
+}
+
+function renderSOTD() {
+  const s = todayShow();
+  const {m, day} = pd(s.date);
+  const el = document.getElementById('sotd');
+  el.style.setProperty('--era-color', s.era.color);
+  const jc = jcOf(s);
+  const allSongs = s.sets.flatMap((set, si) => set.enc ? [] : set.songs.map((song, i) => ({ song, hi: jc.has(si + '.' + i) })));
+  const top = allSongs.slice(0,5);
+  const more = allSongs.length - 5;
+  el.innerHTML = `
+    <div class="sotd-in">
+      <div class="sotd-date">${MOL[m-1]} ${day}, ${s.date.slice(0,4)}</div>
+      <div class="sotd-dow">${s.dow}</div>
+      <div class="sotd-venue">${esc(s.venue)}</div>
+      <div class="sotd-city">${esc(s.city)}</div>
+      <div class="sotd-era">${s.era.name} · ${s.era.years}</div>
+      <div class="sotd-songs">
+        ${top.map(({song, hi})=>`<span class="sotd-song${hi?' hi':''}">${esc(cleanSong(song))}${arrow(segMark(song))}</span>`).join('')}
+        ${more>0?`<span class="sotd-more">+${more} more songs</span>`:''}
+      </div>
+    </div>
+    <div class="sotd-ft">
+      <span class="sotd-src">${s.tour ? esc(s.tour) : 'phish.net · show #' + s.id}</span>
+      <a class="sotd-listen" href="${pinUrl(s.date)}" target="_blank" rel="noopener">Listen ↗</a>
+    </div>`;
+  el.onclick = e => { if (e.target.classList.contains('sotd-listen')) return; navShow(s, true); };
+}
+
+// ─── ERA LIST ───
+function renderEras() {
+  const el = document.getElementById('era-list');
+  el.innerHTML = ERAS.map(e=>`
+    <div class="era-row" style="--era-color:${e.color}" data-id="${e.id}">
+      <div class="era-in">
+        <div class="era-name">${e.name}</div>
+        <div class="era-yrs">${e.years}</div>
+      </div>
+      <div class="era-r">
+        <span class="era-cnt">${e.shows.length} show${e.shows.length>1?'s':''}</span>
+        <span class="era-chev">›</span>
+      </div>
+    </div>`).join('');
+  el.querySelectorAll('.era-row').forEach(r=>{
+    r.onclick=()=>{
+      const e=ERAS.find(x=>x.id===r.dataset.id);
+      navList('era', e.id);
+    };
+  });
+}
+
+// ─── YEAR GRID ───
+function renderYears() {
+  const el = document.getElementById('yr-grid');
+  el.innerHTML = Object.keys(YR_MAP).sort().map(y=>`
+    <button class="yr-btn" data-y="${y}">
+      <span class="yr-n">${y}</span>
+      <span class="yr-c">${YR_MAP[y].length} show${YR_MAP[y].length>1?'s':''}</span>
+    </button>`).join('');
+  el.querySelectorAll('.yr-btn').forEach(b=>{
+    b.onclick=()=>navList('year', b.dataset.y);
+  });
+}
+
+// ─── SHOW ROW MARKUP (shared by lists & search) ───
+function rowHTML(s, i, match) {
+  return `
+    <div class="show-row" data-i="${i}">
+      <div class="dt-col">
+        <span class="dt-num">${fmtNum(s.date)}</span>
+        <span class="dt-dow">${s.dow.slice(0,3)}</span>
+      </div>
+      <div class="sh-info">
+        <div class="sh-venue">${esc(s.venue)}</div>
+        <div class="sh-city">${esc(s.city)}</div>
+        ${match?`<div class="sh-match">♪ ${match}</div>`:''}
+        ${(milestones().get(s.date)||[]).slice(0,1).map(m=>`<div class="sh-badge">${esc(m)}</div>`).join('')}
+      </div>
+      <div class="sh-chev">›</div>
+    </div>`;
+}
+
+let _curShows = [];
+function renderShowList(shows) {
+  _curShows = shows;
+  const el = document.getElementById('show-list');
+  el.innerHTML = shows.map((s,i)=>rowHTML(s,i)).join('');
+  el.querySelectorAll('.show-row').forEach(r=>{
+    r.onclick=()=>navShow(_curShows[+r.dataset.i]);
+  });
+}
+
+// ─── SEARCH ───
+let _srchRes = [];
+function runSearch(q) {
+  const el = document.getElementById('srch-list');
+  const hint = document.getElementById('srch-hint');
+  q = q.trim().toLowerCase();
+  if (q.length < 2) { el.innerHTML=''; hint.textContent='Try “Tweezer”, “Hampton”, or “1997”'; return; }
+  const res = [];
+  for (const s of ALL) {
+    let match = null;
+    if (s.venue.toLowerCase().includes(q) || s.city.toLowerCase().includes(q) || s.date.includes(q) || fmtL(s.date).toLowerCase().includes(q) || (s.tour || '').toLowerCase().includes(q)) {
+      match = '';
+    } else {
+      outer: for (const st of s.sets) for (const song of st.songs) {
+        if (song.toLowerCase().includes(q)) { match = esc(cleanSong(song)); break outer; }
+      }
+    }
+    if (match !== null) { res.push({s, match}); if (res.length >= 120) break; }
+  }
+  _srchRes = res;
+  hint.textContent = res.length ? `${res.length}${res.length>=120?'+':''} show${res.length>1?'s':''} found` : 'Nothing found — try fewer words';
+  el.innerHTML = res.map((r,i)=>rowHTML(r.s, i, r.match)).join('');
+  el.querySelectorAll('.show-row').forEach(r=>{
+    r.onclick=()=>navShow(_srchRes[+r.dataset.i].s, true);
+  });
+}
+let _deb;
+document.getElementById('srch-in').addEventListener('input', e=>{
+  clearTimeout(_deb); _deb = setTimeout(()=>runSearch(e.target.value), 160);
+});
+
+// ─── SHOW DETAIL ───
+function renderShowDetail(s) {
+  const nShows = (venueIndex().byKey.get(venueKey(s)) || {shows:[s]}).shows.length;
+  const run = showRun(s), leg = showLeg(s), band = lineupOn(s.date), marks = milestones().get(s.date) || [];
+
+  const flagged = suspectNote(s.date);
+  const jc = jcOf(s);
+  const setHTML = s.sets.map((set, si)=>{
+    const songs = set.songs.map((song,i)=>{
+      const real = isRealSong(song) && !flagged;
+      const id = real ? cleanSong(song).toLowerCase() : null;
+      const st = id ? songStats(id, s.date) : null;
+      const tag = songTag(st);
+      // A trailing ">" means this song runs straight into the next one.
+      const mark = i < set.songs.length - 1 ? segMark(song) : null, segues = !!mark;
+      const disp = esc(cleanSong(song)), hi = jc.has(si + '.' + i);
+      return `
+      <div class="song-row${st ? ' tapd' : ''}${segues ? ' sg' : ''}"${st ? ` data-song="${esc(id)}"` : ''}>
+        <span class="sn">${set.enc?'':i+1}</span>
+        <span class="s${hi?' hi':''}${set.enc?' en':''}">${disp}${arrow(mark)}${tag?`<span class="tag ${tag.c}">${tag.t}</span>`:''}</span>
+        ${st && !st.segment ? `<span class="sx">${st.n}</span>` : ''}
+      </div>`;
+    }).join('');
+    return `<div class="set-block"><div class="set-lbl${set.enc?' enc':''}">${esc(set.lbl)}</div>${songs}</div>`;
+  }).join('');
+
+  const ctx = [];
+  if (s.tour && !/^not part of a tour$/i.test(s.tour)) ctx.push(esc(s.tour));
+  if (run) ctx.push(`Night ${run.night} of ${run.of}`);
+  if (leg) ctx.push(`Show ${leg.n} of ${leg.of} on this stretch`);
+  if (leg) ctx.push(`${fmtS(leg.leg[0].date)} → ${fmtS(leg.leg[leg.leg.length-1].date)}`);
+
+  document.getElementById('show-content').innerHTML = `
+    <div class="show-hero" style="--era-color:${s.era.color}">
+      <div class="hero-photo" id="hero-photo"></div>
+      <div class="hero-tint"></div>
+      <a class="photo-cred" id="photo-cred" target="_blank" rel="noopener">Photo · Wikipedia</a>
+      <div class="sh-c">
+        <div class="sh-date">${fmtL(s.date)}</div>
+        <div class="sh-dow">${s.dow}</div>
+        <div class="sh-venue-big">${esc(s.venue)}</div>
+        <div class="sh-city-big">${esc(s.city)}</div>
+        <div class="sh-era-lbl">${s.era.name} · ${s.era.years}</div>
+        ${marks.map(m=>`<div class="sh-badge-big">${esc(m)}</div>`).join('')}
+        ${ctx.length?`<div class="sh-ctx">${ctx.map(c=>`<span>${c}</span>`).join('')}</div>`:''}
+        <button class="venue-btn" id="venue-btn"><span class="vb-i">◎</span>Venue guide${nShows>1?` · ${nShows} shows here`:''}</button>
+      </div>
+    </div>
+    ${band.length?`<div class="band-blk">
+      <div class="band-lbl">On stage</div>
+      <div class="band-list">${band.map(m=>`<span class="band-m">${esc(m.n)}<b>${esc(m.r)}</b></span>`).join('')}</div>
+      <div class="band-note">Lineup by date, month-accurate — several joining dates are disputed.</div>
+    </div>`:''}
+    <div class="player-blk" id="player-blk">
+      <button class="play-btn" id="play-btn"><span class="tri">▶</span><span>Play this show</span></button>
+    </div>
+    <div class="setlist-wrap">
+      ${flagged?`<div class="sus">${flagged}</div>`:''}
+      ${setHTML}
+      ${jc.size?`<div class="jc-key"><b>Highlighted</b> songs made the phish.net jam chart.</div>`:''}
+      ${s.notes?`<details class="notes"><summary>Show notes</summary><p>${esc(s.notes)}</p></details>`:''}
+      <div class="sh-footer">
+        <div class="sh-ft-src">Source: phish.net · Show ID #${s.id}</div>
+        <div class="sh-ft-btns">
+          <a class="arch-btn" href="${pinUrl(s.date)}" target="_blank" rel="noopener"><span>phish.in ↗</span></a>
+          <a class="arch-btn" href="${pnetUrl(s)}" target="_blank" rel="noopener"><span>phish.net ↗</span></a>
+        </div>
+      </div>
+    </div>
+    <div id="otd-card"></div>`;
+
+  document.getElementById('venue-btn').onclick = () => openVenueSheet(s);
+  document.querySelectorAll('#show-content .song-row.tapd').forEach(r => {
+    r.onclick = () => openSongSheet(r.dataset.song, s);
+  });
+
+  // This day in history (async, omitted entirely if nothing comes back)
+  const otdCard = document.getElementById('otd-card');
+  onThisDay(s.date).then(fact => {
+    if (!otdCard.isConnected || !fact) return;
+    otdCard.innerHTML = `
+      <div class="otd-card">
+        <div class="otd-lbl">This day in history</div>
+        <div class="otd-text"><b>${fact.year}</b> — ${esc(fact.text)}</div>
+        ${fact.page ? `<div class="otd-src"><a href="${fact.page}" target="_blank" rel="noopener">Read more on Wikipedia ↗</a></div>` : ''}
+      </div>`;
+  }).catch(() => {});
+
+  // venue photo (async, graceful fallback to era art)
+  venuePhoto(s.venue, s.city).then(p=>{
+    if (!p) return;
+    const ph = document.getElementById('hero-photo'), cr = document.getElementById('photo-cred');
+    if (!ph) return; // user already navigated away
+    const img = new Image();
+    img.onload = () => { ph.style.backgroundImage = `url("${p.src}")`; ph.classList.add('on'); cr.href = p.page; cr.classList.add('on'); };
+    img.src = p.src;
+  });
+
+  // inline player (on demand) — phish.in, one track per song
+  const btn = document.getElementById('play-btn');
+  btn.onclick = async () => {
+    btn.disabled = true;
+    btn.querySelector('span:last-child').textContent = 'Fetching from phish.in…';
+    const blk = document.getElementById('player-blk');
+    try {
+      const { tracks } = await showAudio(s.date);
+      if (!blk.isConnected) return;
+      if (!tracks.length) throw new Error('none');
+      let lastSet = null;
+      const rows = tracks.map((t, i) => {
+        const hd = t.set !== lastSet ? `<div class="au-set">${esc(t.set || 'Set')}</div>` : '';
+        lastSet = t.set;
+        return hd + `<button class="au-tr" data-i="${i}"><span>${esc(t.title)}</span><i>${mmss(t.secs)}</i></button>`;
+      }).join('');
+      blk.innerHTML = `
+        <audio class="au-el" id="au-el" controls preload="none"></audio>
+        <div class="au-now" id="au-now"></div>
+        <div class="au-list">${rows}</div>
+        <div class="player-meta">${tracks.length} tracks streamed from <a href="${pinUrl(s.date)}" target="_blank" rel="noopener">phish.in ↗</a></div>`;
+      const au = document.getElementById('au-el'), now = document.getElementById('au-now');
+      const btns = [...blk.querySelectorAll('.au-tr')];
+      let cur = -1;
+      const play = i => {
+        if (i < 0 || i >= tracks.length) return;
+        cur = i;
+        au.src = tracks[i].src;
+        au.play().catch(() => {});
+        btns.forEach((b, j) => b.classList.toggle('on', j === i));
+        now.innerHTML = `<b>${i + 1}/${tracks.length}</b>${esc(tracks[i].title)}`;
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.metadata = new MediaMetadata({ title: tracks[i].title, artist: 'Phish', album: `${fmtL(s.date)} · ${s.venue}` });
+          navigator.mediaSession.setActionHandler('nexttrack', () => play(cur + 1));
+          navigator.mediaSession.setActionHandler('previoustrack', () => play(cur - 1));
+        }
+      };
+      btns.forEach(b => b.onclick = () => play(+b.dataset.i));
+      au.addEventListener('ended', () => play(cur + 1));
+      play(0);
+    } catch(e) {
+      if (blk.isConnected) blk.innerHTML = `<div class="player-err">Couldn't load the audio here — <a href="${pinUrl(s.date)}" target="_blank" rel="noopener">listen on phish.in ↗</a></div>`;
+    }
+  };
+}
+
+// ─── NAV + HISTORY ───
+// The three views are CSS states on one document, so without history entries
+// the browser's back button leaves the app entirely instead of stepping back
+// through it. Every in-app move pushes an entry, and the on-screen back arrows
+// call history.back() rather than moving the views themselves — so the two can
+// never disagree about where "back" goes.
+//
+// Shows are keyed by id, not date: a handful of early dates carry two shows.
+const $home = document.getElementById('home');
+const $list = document.getElementById('list-view');
+const $show = document.getElementById('show-view');
+let _showBack = 'list';
+let _curShow = null;
+let _restoring = false;   // true while replaying a popstate, so we don't re-push
+
+const push = state => { if (!_restoring) history.pushState(state, ''); };
+
+function listData(kind, key) {
+  if (kind === 'year') {
+    const shows = YR_MAP[key];
+    return shows ? { title: key, sub: shows.length + ' shows', shows } : null;
+  }
+  const e = ERAS.find(x => x.id === key);
+  return e ? { title: e.name, sub: `${e.years} · ${e.shows.length} shows`,
+               shows: ALL.filter(s => s.era.id === e.id) } : null;
+}
+
+// ── apply*: move the views. These never touch history. ──
+function applyHome() {
+  closeSheet();
+  $show.classList.add('r'); $show.classList.remove('l');
+  $list.classList.add('r'); $list.classList.remove('l');
+  $home.classList.remove('l');
+}
+
+function applyList(kind, key) {
+  closeSheet();
+  const d = listData(kind, key);
+  if (!d) return applyHome();
+  document.getElementById('list-t').textContent = d.title;
+  document.getElementById('list-s').textContent = d.sub;
+  renderShowList(d.shows);
+  $list.scrollTop = 0;
+  $home.classList.add('l');
+  $list.classList.remove('r','l');
+  $show.classList.add('r'); $show.classList.remove('l');
+}
+
+function applyShow(id, from) {
+  closeSheet();
+  const s = ALL.find(x => x.id === id);
+  if (!s) return applyHome();
+  _curShow = s;
+  renderShowDetail(s);
+  document.getElementById('show-t').textContent = s.venue;
+  document.getElementById('show-s').textContent = fmtL(s.date);
+  document.getElementById('nav-venue').hidden = false;
+  $show.scrollTop = 0;
+  _showBack = from;
+  if (from === 'home') { $home.classList.add('l'); $list.classList.add('r'); }
+  else { $list.classList.add('l'); $list.classList.remove('r'); }
+  $show.classList.remove('r','l');
+}
+
+// ── nav*: what the app calls. Push, then apply. ──
+function navList(kind, key) {
+  push({ v:'list', kind, key });
+  applyList(kind, key);
+}
+
+function navShow(s, fromHome=false) {
+  const from = fromHome ? 'home' : 'list';
+  push({ v:'show', key:s.id, from });
+  applyShow(s.id, from);
+}
+
+// Jumping to another show from inside a sheet: the sheet's entry is consumed
+// rather than stacked, so back from the new show lands where the sheet was
+// opened from instead of reopening it.
+function jumpFromSheet(s) {
+  closeSheet();
+  const from = _showBack === 'home' ? 'home' : 'list';
+  history.replaceState({ v:'show', key:s.id, from }, '');
+  applyShow(s.id, from);
+}
+
+document.getElementById('list-back').onclick = () => history.back();
+document.getElementById('show-back').onclick = () => history.back();
+
+addEventListener('popstate', e => {
+  const st = e.state || { v:'home' };
+  _restoring = true;
+  try {
+    if (st.v === 'sheet') {
+      const show = ALL.find(x => x.id === st.showId);
+      if (!show) { applyHome(); return; }
+      applyShow(st.showId, st.from || 'home');
+      if (st.kind === 'song') openSongSheet(st.key, show); else openVenueSheet(show);
+    }
+    else if (st.v === 'show') applyShow(st.key, st.from || 'home');
+    else if (st.v === 'list') applyList(st.kind, st.key);
+    else applyHome();
+  } finally { _restoring = false; }
+});
+
+// The document always loads showing home, so anchor the bottom of the stack
+// there — including on a reload from deeper in the app, where the restored
+// entry would otherwise disagree with what's on screen.
+history.replaceState({ v:'home' }, '');
+
+// Tabs
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+    document.querySelectorAll('.tp').forEach(p=>p.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('tp-'+btn.dataset.tp).classList.add('on');
+    if (btn.dataset.tp==='srch') document.getElementById('srch-in').focus();
+  };
+});
+
+// Random show
+document.getElementById('rand-btn').onclick = () => {
+  if (!ALL.length) return;
+  navShow(ALL[Math.floor(Math.random()*ALL.length)], true);
+};
+
+// ─── INIT: load data, then render ───
+async function boot() {
+  let r;
+  try { r = await fetch('shows-data.json'); } catch(e) { r = null; }
+  // No data file yet is the normal state of a fresh checkout, not an error:
+  // the archive is built locally by scrape_phish.py (it needs an API key).
+  if (r && r.status === 404) {
+    document.getElementById('sotd').innerHTML =
+      `<div class="empty">No shows loaded yet.<br>Run <code>python scrape_phish.py</code> in the <code>phish/</code> folder<br>and commit <code>shows-data.json</code>.</div>`;
+    return;
+  }
+  try {
+    if (!r || !r.ok) throw new Error(r ? r.status : 'offline');
+    ERAS = await r.json();
+    ALL = ERAS.flatMap(e => e.shows.map(s => ({...s, era:e})));
+    if (!ALL.length) throw new Error('empty');
+    YR_MAP = {};
+    ALL.forEach(s => { const y = s.date.slice(0,4); (YR_MAP[y] = YR_MAP[y]||[]).push(s); });
+    const yrs = Object.keys(YR_MAP).sort();
+    document.getElementById('hero-yrs').textContent = `${yrs[0]}–${yrs[yrs.length - 1]}`;
+    // Venue history/photos — scraped from Wikipedia by scrape_venues.py. Optional:
+    // the app works fine without it, just without the building details.
+    try {
+      const rv = await fetch('venues-data.json');
+      if (rv.ok) VENUES_INFO = await rv.json();
+    } catch(e) {}
+    renderSOTD();
+    renderEras();
+    renderYears();
+  } catch(e) {
+    document.getElementById('sotd').innerHTML =
+      `<div class="load-err">Couldn't load the shows.<br><button onclick="location.reload()">Retry</button></div>`;
+  }
+}
+boot();
+
+// ─── PWA ───
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>

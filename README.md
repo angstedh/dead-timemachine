@@ -3,6 +3,8 @@
 Mobile-first Grateful Dead setlist browser. Tap an NFC tag → instant show lookup.
 Setlists sourced and verified from **setlists.net**.
 
+There's a Phish version too, in [`phish/`](phish/README.md).
+
 ---
 
 ## What's in here

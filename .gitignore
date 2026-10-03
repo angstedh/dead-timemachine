@@ -7,3 +7,5 @@ errors.txt
 .segue-cache/
 *.json.bak
 __pycache__/
+.phish-cache/
+.venue-cache/

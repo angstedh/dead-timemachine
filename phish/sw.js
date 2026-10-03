@@ -1,16 +1,21 @@
-// Dead Time Machine service worker
-const VER = 'dtm-v5';
-const CORE = ['./', 'index.html', 'shows-data.json', 'venues-data.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
+// Phish Time Machine service worker
+// Shares an origin (and so a Cache Storage namespace) with the Dead app one
+// directory up, so it only ever touches caches carrying its own prefix.
+const PREFIX = 'ptm-';
+const VER = PREFIX + 'v1';
+const CORE = ['./', 'index.html', 'shows-data.json', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(VER).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
+  // shows-data.json may not exist yet on a fresh checkout — cache what's there.
+  e.waitUntil(caches.open(VER)
+    .then(c => Promise.all(CORE.map(u => c.add(u).catch(() => {}))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      // Only our own caches: the Phish app in /phish/ shares this origin.
-      .then(keys => Promise.all(keys.filter(k => k.startsWith('dtm-') && k !== VER).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k.startsWith(PREFIX) && k !== VER).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -22,7 +27,7 @@ self.addEventListener('fetch', e => {
   // Same-origin: stale-while-revalidate (instant open, silent refresh)
   if (url.origin === location.origin) {
     e.respondWith(
-      caches.match(e.request).then(cached => {
+      caches.match(e.request, { cacheName: VER }).then(cached => {
         const net = fetch(e.request).then(res => {
           if (res && res.ok) caches.open(VER).then(c => c.put(e.request, res.clone()));
           return res;
@@ -42,5 +47,5 @@ self.addEventListener('fetch', e => {
       }))
     );
   }
-  // Everything else (archive.org, wikipedia): straight to network
+  // Everything else (phish.in audio, wikipedia): straight to network
 });
