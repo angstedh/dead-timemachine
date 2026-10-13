@@ -451,10 +451,10 @@ const pd = d => { const [y,m,day] = d.split('-').map(Number); return {y,m,day}; 
 const fmtL = d => { const {y,m,day} = pd(d); return `${MOL[m-1]} ${day}, ${y}`; };
 const fmtS = d => { const {y,m,day} = pd(d); return `${MOL[m-1].slice(0,3)} ${day}, ${y}`; };
 const z2 = n => String(n).padStart(2,'0');
-// dd/mm/yy — used everywhere a date is a row in a scrolling list, so a long
+// mm/dd/yy — used everywhere a date is a row in a scrolling list, so a long
 // list of shows reads as one consistent numeric column instead of mixed
 // month-name/short/long formats.
-const fmtNum = d => { const {y,m,day} = pd(d); return `${z2(day)}/${z2(m)}/${String(y).slice(-2)}`; };
+const fmtNum = d => { const {y,m,day} = pd(d); return `${z2(m)}/${z2(day)}/${String(y).slice(-2)}`; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const archUrl = d => `https://archive.org/search?query=collection%3A%22GratefulDead%22+AND+date%3A${d}`;
 const slUrl = id => `https://www.setlists.net/?show_id=${id}`;
