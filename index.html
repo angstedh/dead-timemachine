@@ -138,6 +138,10 @@ body{min-height:100%;background:var(--black);color:var(--cream);font-family:var(
 /* LIST VIEW */
 .show-row{display:flex;align-items:flex-start;padding:0 16px;border-bottom:1px solid var(--border);cursor:pointer;min-height:72px;transition:background var(--t)}
 .show-row:active{background:var(--panel)}
+.mo-brk{display:flex;align-items:center;gap:12px;padding:18px 16px 10px;border-bottom:1px solid var(--border);background:var(--panel)}
+.mo-brk::before,.mo-brk::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.mo-brk::after{background:linear-gradient(270deg,transparent,var(--gold))}
+.mo-brk span{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--gold);letter-spacing:4px;text-transform:uppercase;white-space:nowrap}
 .dt-col{padding:14px 8px 14px 0;border-right:1px solid var(--subtle);margin-right:12px;flex-shrink:0;text-align:right;width:76px}
 .dt-num{font-family:var(--font-display);font-size:13px;font-weight:900;color:var(--cream);line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:.3px;display:block;white-space:nowrap}
 .dt-dow{font-family:var(--font-ui);font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:3px}
@@ -1222,7 +1226,12 @@ let _curShows = [];
 function renderShowList(shows) {
   _curShows = shows;
   const el = document.getElementById('show-list');
-  el.innerHTML = shows.map((s,i)=>rowHTML(s,i)).join('');
+  el.innerHTML = shows.map((s,i)=>{
+    const p = i ? pd(shows[i-1].date) : null, c = pd(s.date);
+    const brk = p && (p.y !== c.y || p.m !== c.m)
+      ? `<div class="mo-brk"><span>${MOL[c.m-1]}${p.y !== c.y ? ` ${c.y}` : ''}</span></div>` : '';
+    return brk + rowHTML(s,i);
+  }).join('');
   el.querySelectorAll('.show-row').forEach(r=>{
     r.onclick=()=>navShow(_curShows[+r.dataset.i]);
   });
